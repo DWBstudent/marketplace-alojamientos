@@ -1,1 +1,32 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+  se añanden los colores que fijamos en los estandares del figma
+ */
+:root {
+  /*
+    Colores
+   */
+  --kuppo-yellow-light: #fff3b0;
+  --kuppo-yellow: #ffd60a;
+  --kuppo-red: #e63946;
+  --kuppo-wine: #a4161a;
+  --kuppo-warm-gray: #f6f4f1;
+
+  /*Fuente principal*/
+  --bs-body-font-family: 'Kaisei HarunoUmi', Georgia, serif;
+  --bs-link-color-rgb: 164, 22, 26;
+  --bs-link-hover-color-rgb: 120, 16, 19;
+}
+
+/*Boton primario para pruebas y diseños*/
+.btn-kuppo{
+  --bs-btn-color: var(--kuppo-yellow);
+  --bs-btn-bg: var(--kuppo-wine);
+  --bs-btn-border-color: var(--kuppo-wine);
+  --bs-btn-hover-color: var(--kuppo-yellow);
+  --bs-btn-hover-bg: #8a1215;
+  --bs-btn-hover-border-color: #8a1215;
+  --bs-btn-active-color: var(--kuppo-yellow);
+  --bs-btn-active-bg: #7a1013;
+  --bs-btn-active-border-color: #7a1013;
+  --bs-btn-focus-shadow-rgb: 164, 22, 26;
+}
