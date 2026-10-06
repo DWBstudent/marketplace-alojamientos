@@ -36,6 +36,7 @@ Rules:
 - Pages and components get their own folder (`pages/inicio/inicio.ts`). Services and models are single files.
 - Generate pages and components with the CLI: `ng generate component pages/<name>` or `ng generate component components/<name>`.
 - Interface code never imports the JSON file directly. All data goes through an Angular service (requirement of the brief).
+- The data file is `public/data/marketplace-data.json`. The service requests it as `data/marketplace-data.json` (relative path, without a leading slash).
 - Lodgings with `activo: false` must never reach the interface. The service filters them out.
 - Static files go in `public/`, not in `src/assets/`.
 
@@ -50,7 +51,7 @@ Rules:
 | CSS classes | kebab-case | `alojamiento-card` |
 
 - Components are standalone and keep the CLI default names (class `Inicio`, no `Component` suffix).
-- Services use `@Injectable({ providedIn: 'root' })`.
+- Services use `@Injectable({ providedIn: 'root' })` and the `Service` suffix in the file and class name (`alojamiento.service.ts`, `AlojamientoService`). `angular.json` makes `ng generate service` add the suffix by default. Components and pages keep the CLI defaults without suffix.
 - HTML uses semantic elements (`header`, `nav`, `main`, `section`, `article`, `footer`).
 - Avoid inline styles. Prefer the CSS file of the component.
 - Code must be readable, with consistent indentation (the `.editorconfig` file defines it).
@@ -58,7 +59,7 @@ Rules:
 ## 4. Angular 21 notes
 
 - Angular 21 is **zoneless by default**. State that a template reads must live in **signals**. A plain property assigned from an HTTP response may not refresh the view.
-- `HttpClient` is expected to be available without extra setup in Angular 21. The first service will confirm it.
+- `HttpClient` is available without extra setup in Angular 21 (verified with `AlojamientoService`). In tests, add `provideHttpClient()` and `provideHttpClientTesting()` to `providers`.
 
 ## 5. Styling and interface
 
@@ -124,12 +125,12 @@ Rules:
 | Visual library | Bootstrap 5.3 (CSS only) with Font Awesome 7 |
 | Typography and palette | Kaisei HarunoUmi and the Kuppo palette as CSS variables |
 | Mobile menu | Built with an Angular signal, without Bootstrap JavaScript |
+| Service naming | `Service` suffix in file and class name (`AlojamientoService`) |
+| Data file | `public/data/marketplace-data.json`, read only through `AlojamientoService` |
 
 ### Still open
 
 | Decision | When it is resolved |
 |---|---|
-| Suffix `Service` in service names (course convention) or the CLI default without suffix | When the first service is generated |
 | Quotation inside the detail page (proposal) or in its own route | After the detail prototype |
-| Final location of the data JSON inside `public/` (expected `public/data/marketplace-data.json`) | When the file is added and opened in the browser |
 | Quick search bar and date fields on the home page (extra) | After the mandatory requirements are done |
