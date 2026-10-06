@@ -25,3 +25,14 @@
   background-color: var(--kuppo-wine);
   color: var(--kuppo-yellow);
 }
+
+@media (max-width: 767.98px) {
+  .navbar-brand img {
+    height: 32px;
+    width: auto;
+  }
+
+  .navbar-nav {
+    padding-top: 0.75rem;
+  }
+}
