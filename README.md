@@ -4,7 +4,10 @@
 Frontend web application developed in Angular for Inversiones LR, which allows guests to browse accommodations, filter them, view details, get a price quote, and register a simulated booking.
 
 ## Team Members
-- (pending)
+- CESAR DAVID CARDENAS PEÑA
+- DANIEL
+- DANIEL
+- ANDRES
 
 ## Technologies Used
 - (pending)
