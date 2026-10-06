@@ -1,0 +1,29 @@
+
+<nav class="navbar navbar-expand-md" aria-label="Navegacion principal">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/" aria-label="Kuppo, ir al inicio">
+      <img src="assets/images/kuppo-logo.png" alt="Kuppo" width="115" height="40" />
+    </a>
+
+    <ul class="navbar-nav ms-auto gap-2"> <!--boton de inicio-->
+      <li class="nav-item">
+        <a class="nav-pill-link" routerLink="/" routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact : true}">
+          <i class="fa-solid fa-house"></i> Inicio
+        </a>
+      </li>
+      <li class="nav-item"><!--boton de alojamientos-->
+        <a class="nav-pill-link" routerLink="/alojamientos" routerLinkActive="active">
+          <i class="fa-solid fa-building"></i> Alojamientos
+        </a>
+      </li>
+
+      <li class="nav-item"><!--boton de reservas-->
+        <a class="nav-pill-link" routerLink="/mis-reservas" routerLinkActive="active">
+          <i class="fa-solid fa-calendar-days"></i> Mis reservas
+        </a>
+      </li>
+    </ul>
+
+  </div>
+</nav>

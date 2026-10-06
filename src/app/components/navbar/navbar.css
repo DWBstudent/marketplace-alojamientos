@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.navbar {
+  background-color: var(--kuppo-yellow-light);
+}
+
+.nav-pill-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 50rem;
+  background-color: var(--kuppo-warm-gray);
+  color: var(--kuppo-wine);
+  text-decoration: none;
+}
+
+.nav-pill-link:not(.active):hover {
+  background-color: #fff;
+}
+
+.nav-pill-link.active {
+  background-color: var(--kuppo-wine);
+  color: var(--kuppo-yellow);
+}
