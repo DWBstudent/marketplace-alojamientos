@@ -23,3 +23,6 @@ Frontend web application developed in Angular for Inversiones LR, which allows g
 
 ## General Project Structure
 (pending)
+
+## Design prototypes (Figma)
+https://www.figma.com/design/AXTL2B8ZQ4pfiNHUVvRUno/Prototypes?t=B39f3hhGm47gNkG8-1
