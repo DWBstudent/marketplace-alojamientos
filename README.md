@@ -9,7 +9,7 @@ Frontend web application developed in Angular for Inversiones LR, which allows g
 * CESAR DAVID CARDENAS PEÑA
 * ANGEL DANIEL AYA PAEZ
 * DANIEL
-* ANDRES FELIPE NEISA MORENO 
+* ANDRES FELIPE NEISA MORENO
 
 ## Technologies Used
 
