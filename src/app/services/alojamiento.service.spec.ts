@@ -96,6 +96,7 @@ describe('AlojamientoService', () => {
 
     expect(resultado).toBeUndefined();
   });
+
   it('should set an error when loading a lodging by id fails', () => {
     let resultado: Alojamiento | undefined;
 
@@ -158,7 +159,7 @@ describe('AlojamientoService', () => {
     service.getResenasPorAlojamientoId(1).subscribe((resenas) => (resultado = resenas));
 
     http.expectOne('data/marketplace-data.json').flush({
-        alojamientos: [crearAlojamiento(1, true), crearAlojamiento(2, true)],
+      alojamientos: [crearAlojamiento(1, true), crearAlojamiento(2, true)],
       resenas: [
         crearResena(1, 1, 'Laura'),
         crearResena(2, 1, 'Carlos'),
