@@ -5,7 +5,7 @@ Frontend web application developed in Angular for Inversiones LR, which allows g
 
 ## Team Members
 - CESAR DAVID CARDENAS PEÑA
-- DANIEL
+- ANGEL DANIEL AYA PAEZ
 - DANIEL
 - ANDRES
 
