@@ -48,11 +48,17 @@ export class AlojamientoService {
   }
 
   getResenasPorAlojamientoId(id: number): Observable<Resena[]> {
-    return this.conEstado(
-      () =>
-        this.http
-          .get<DatosMarketplace>(this.urlDatos)
-          .pipe(map((datos) => datos.resenas.filter((resena) => resena.alojamientoId === id))),
+    return this.conEstado( () =>  this.http.get<DatosMarketplace>(this.urlDatos).pipe( map((datos) => {
+
+            const alojamientoActivo = datos.alojamientos.some(
+              (alojamiento) => alojamiento.activo && alojamiento.id === id,
+            );
+
+            return alojamientoActivo
+              ? datos.resenas.filter((resena) => resena.alojamientoId === id)
+              : [];
+          }),
+        ),
       'No fue posible cargar las reseñas.',
       [],
     );
