@@ -129,6 +129,31 @@ describe('AlojamientoService', () => {
     expect(service.estaCargando()).toBe(false);
   });
 
+  it('should keep loading while concurrent requests are pending', () => {
+    service.getAlojamientos().subscribe();
+    service.getAlojamientos().subscribe();
+
+    expect(service.estaCargando()).toBe(true);
+
+    const requests = http.match('data/marketplace-data.json');
+
+    expect(requests).toHaveLength(2);
+
+    requests[0].flush({
+      alojamientos: [],
+      resenas: [],
+    });
+
+    expect(service.estaCargando()).toBe(true);
+
+    requests[1].flush({
+      alojamientos: [],
+      resenas: [],
+    });
+
+    expect(service.estaCargando()).toBe(false);
+  });
+
   it('should set an error when loading lodgings fails', () => {
     let resultado: Alojamiento[] = [];
 
@@ -143,7 +168,7 @@ describe('AlojamientoService', () => {
 
     expect(resultado).toEqual([]);
 
-    expect(service.mensajeError()).toBe('No fue posible cargar los alojamientos.');
+    expect(service.mensajeError()).toBe('No pudimos cargar los alojamientos. Intenta de nuevo.');
 
     expect(service.estaCargando()).toBe(false);
   });
@@ -158,7 +183,7 @@ describe('AlojamientoService', () => {
       statusText: 'Server Error',
     });
 
-    expect(service.mensajeError()).toBe('No fue posible cargar los alojamientos.');
+    expect(service.mensajeError()).toBe('No pudimos cargar los alojamientos. Intenta de nuevo.');
 
     service.getAlojamientos().subscribe();
 
