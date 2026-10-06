@@ -97,13 +97,69 @@ describe('AlojamientoService', () => {
     expect(resultado).toBeUndefined();
   });
 
+  it('should set an error when loading a lodging by id fails', () => {
+    let resultado: Alojamiento | undefined;
+
+    service.getAlojamientoPorId(1).subscribe((alojamiento) => (resultado = alojamiento));
+
+    http.expectOne('data/marketplace-data.json').flush('Error', {
+      status: 500,
+      statusText: 'Server Error',
+    });
+
+    expect(resultado).toBeUndefined();
+    expect(service.mensajeError()).toBe('No fue posible cargar el alojamiento.');
+    expect(service.estaCargando()).toBe(false);
+  });
+
+  it('should set an error when loading reviews fails', () => {
+    let resultado: Resena[] | undefined;
+
+    service.getResenasPorAlojamientoId(1).subscribe((resenas) => (resultado = resenas));
+
+    http.expectOne('data/marketplace-data.json').flush('Error', {
+      status: 500,
+      statusText: 'Server Error',
+    });
+
+    expect(resultado).toEqual([]);
+    expect(service.mensajeError()).toBe('No fue posible cargar las reseñas.');
+    expect(service.estaCargando()).toBe(false);
+  });
+
+  it('should not return reviews of an inactive lodging', () => {
+    let resultado: Resena[] | undefined;
+
+    service.getResenasPorAlojamientoId(2).subscribe((resenas) => (resultado = resenas));
+
+    http.expectOne('data/marketplace-data.json').flush({
+      alojamientos: [crearAlojamiento(1, true), crearAlojamiento(2, false)],
+      resenas: [crearResena(1, 1, 'Laura'), crearResena(2, 2, 'Carlos')],
+    });
+
+    expect(resultado).toEqual([]);
+  });
+
+  it('should not return reviews of an unknown lodging', () => {
+    let resultado: Resena[] | undefined;
+
+    service.getResenasPorAlojamientoId(99).subscribe((resenas) => (resultado = resenas));
+
+    http.expectOne('data/marketplace-data.json').flush({
+      alojamientos: [crearAlojamiento(1, true)],
+      resenas: [crearResena(1, 99, 'Laura')],
+    });
+
+    expect(resultado).toEqual([]);
+  });
+
   it('should return reviews for a lodging', () => {
     let resultado: Resena[] = [];
 
     service.getResenasPorAlojamientoId(1).subscribe((resenas) => (resultado = resenas));
 
     http.expectOne('data/marketplace-data.json').flush({
-      alojamientos: [],
+      alojamientos: [crearAlojamiento(1, true), crearAlojamiento(2, true)],
       resenas: [
         crearResena(1, 1, 'Laura'),
         crearResena(2, 1, 'Carlos'),
