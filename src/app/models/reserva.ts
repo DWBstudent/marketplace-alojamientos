@@ -9,8 +9,8 @@ export interface Reserva {
   fechaSalida: string;
   huespedes: number;
   noches: number;
-  valorTotal: number;
+  total: number;
+  estado: EstadoReserva;
   nombreHuesped: string;
   correoHuesped: string;
-  estado: EstadoReserva;
 }
