@@ -1,0 +1,42 @@
+<form class="card p-3" novalidate (submit)="enviar($event)">
+  <h2 class="h5 mb-3">Datos del huésped</h2>
+
+  <div class="mb-3">
+    <label class="form-label" for="huesped-nombre">Nombre completo</label>
+    <input
+      #campoNombre
+      id="huesped-nombre"
+      type="text"
+      class="form-control"
+      autocomplete="name"
+      [class.is-invalid]="intentado() && errorNombre()"
+      [value]="nombre()"
+      (input)="nombre.set(campoNombre.value)"
+    />
+    @if (intentado() && errorNombre(); as mensaje) {
+      <div class="invalid-feedback d-block">{{ mensaje }}</div>
+    }
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="huesped-correo">Correo electrónico</label>
+    <input
+      #campoCorreo
+      id="huesped-correo"
+      type="email"
+      class="form-control"
+      autocomplete="email"
+      [class.is-invalid]="intentado() && errorCorreo()"
+      [value]="correo()"
+      (input)="correo.set(campoCorreo.value)"
+    />
+    @if (intentado() && errorCorreo(); as mensaje) {
+      <div class="invalid-feedback d-block">{{ mensaje }}</div>
+    }
+  </div>
+
+  <button type="submit" class="btn btn-kuppo w-100" [disabled]="!habilitado()">Reservar</button>
+  @if (!habilitado()) {
+    <div class="form-text">Primero genera una cotización válida para poder reservar.</div>
+  }
+</form>
