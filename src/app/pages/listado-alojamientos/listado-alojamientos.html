@@ -1,1 +1,10 @@
-<p>listado-alojamientos works!</p>
+<section class="container py-4">
+  <h1>Alojamientos</h1>
+  <div class="row g-4">
+    @for (alojamiento of alojamientos(); track alojamiento.id) {
+      <div class="col-12 col-sm-6 col-lg-4">
+        <article>{{ alojamiento.nombre }} - {{ alojamiento.ciudad }}</article>
+      </div>
+    }
+  </div>
+</section>
