@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Alojamiento } from '../models/alojamiento';
-import { FiltroBusqueda } from '../models/filtro-busqueda';
-
+import { FILTRO_VACIO, FiltroBusqueda } from '../models/filtro-busqueda';
 @Injectable({ providedIn: 'root' })
 export class FiltroAlojamientosService {
   aplicar(alojamientos: Alojamiento[], filtro: FiltroBusqueda): Alojamiento[] {
@@ -23,13 +22,16 @@ export class FiltroAlojamientosService {
     return filtro.tipo === null || alojamiento.tipo === filtro.tipo;
   }
 
-
   private cumpleHuespedes(alojamiento: Alojamiento, filtro: FiltroBusqueda): boolean {
     return filtro.huespedes === null || alojamiento.capacidad >= filtro.huespedes;
   }
 
-
   private cumplePrecioMaximo(alojamiento: Alojamiento, filtro: FiltroBusqueda): boolean {
     return filtro.precioMaximo === null || alojamiento.precioNoche <= filtro.precioMaximo;
   }
+
+  limpiar(): FiltroBusqueda {
+    return { ...FILTRO_VACIO };
+  }
 }
+

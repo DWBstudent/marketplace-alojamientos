@@ -127,4 +127,12 @@ describe('FiltrosAlojamientos', () => {
       tipo: 'Casa',
     });
   });
+  it('should reset the filter when clearing filters', () => {
+    elegir('filtro-ciudad', 'Cartagena');
+    elegir('filtro-tipo', 'Casa');
+
+    (element.querySelector('button') as HTMLButtonElement).click();
+
+    expect(fixture.componentInstance.filtro()).toEqual(FILTRO_VACIO);
+  });
 });

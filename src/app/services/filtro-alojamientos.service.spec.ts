@@ -111,4 +111,7 @@ describe('FiltroAlojamientosService', () => {
 
     expect(service.aplicar(alojamientos, filtro)).toEqual([]);
   });
+  it('should return an empty filter when clearing', () => {
+    expect(service.limpiar()).toEqual(FILTRO_VACIO);
+  });
 });

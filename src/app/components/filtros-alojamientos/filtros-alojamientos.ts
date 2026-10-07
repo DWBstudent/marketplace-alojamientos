@@ -1,7 +1,8 @@
-import { Component, input, model } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
 
 import { TipoAlojamiento } from '../../models/alojamiento';
 import { FiltroBusqueda } from '../../models/filtro-busqueda';
+import { FiltroAlojamientosService } from '../../services/filtro-alojamientos.service';
 
 @Component({
   selector: 'app-filtros-alojamientos',
@@ -9,6 +10,8 @@ import { FiltroBusqueda } from '../../models/filtro-busqueda';
   styleUrl: './filtros-alojamientos.css',
 })
 export class FiltrosAlojamientos {
+  private readonly filtroService = inject(FiltroAlojamientosService);
+
   readonly ciudades = input.required<string[]>();
   readonly tipos = input.required<TipoAlojamiento[]>();
   readonly filtro = model.required<FiltroBusqueda>();
@@ -24,7 +27,6 @@ export class FiltrosAlojamientos {
     }));
   }
 
-  // Guests must be a whole number greater than zero; anything else means "no filter".
   protected cambiarHuespedes(valor: string): void {
     const huespedes = this.aNumeroPositivo(valor);
 
@@ -38,9 +40,15 @@ export class FiltrosAlojamientos {
     this.filtro.update((actual) => ({ ...actual, precioMaximo: this.aNumeroPositivo(valor) }));
   }
 
+  protected limpiarFiltros(): void {
+    this.filtro.set(this.filtroService.limpiar());
+  }
+
   private aNumeroPositivo(valor: string): number | null {
     const numero = Number(valor);
 
     return valor.trim() !== '' && Number.isFinite(numero) && numero > 0 ? numero : null;
   }
 }
+
+
