@@ -22,6 +22,25 @@
       }
     </select>
   </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="filtro-huespedes">Huéspedes</label>
+    <input #inputHuespedes id="filtro-huespedes" class="form-control" type="number"
+           min="1" step="1" inputmode="numeric" placeholder="Cualquiera"
+           [value]="filtro().huespedes ?? ''"
+           (input)="cambiarHuespedes(inputHuespedes.value)" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="filtro-precio-maximo">Precio máximo por noche</label>
+    <div class="input-group">
+      <span class="input-group-text">$</span>
+      <input #inputPrecioMaximo id="filtro-precio-maximo" class="form-control" type="number"
+             min="0" step="10000" inputmode="numeric" placeholder="Sin límite"
+             [value]="filtro().precioMaximo ?? ''"
+             (input)="cambiarPrecioMaximo(inputPrecioMaximo.value)" />
+    </div>
+  </div>
   <button type="button" class="btn btn-outline-secondary w-100" (click)="limpiarFiltros()">
     Limpiar filtros
   </button>

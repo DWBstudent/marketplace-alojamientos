@@ -27,7 +27,28 @@ export class FiltrosAlojamientos {
     }));
   }
 
+  protected cambiarHuespedes(valor: string): void {
+    const huespedes = this.aNumeroPositivo(valor);
+
+    this.filtro.update((actual) => ({
+      ...actual,
+      huespedes: huespedes !== null && Number.isInteger(huespedes) ? huespedes : null,
+    }));
+  }
+
+  protected cambiarPrecioMaximo(valor: string): void {
+    this.filtro.update((actual) => ({ ...actual, precioMaximo: this.aNumeroPositivo(valor) }));
+  }
+
   protected limpiarFiltros(): void {
     this.filtro.set(this.filtroService.limpiar());
   }
+
+  private aNumeroPositivo(valor: string): number | null {
+    const numero = Number(valor);
+
+    return valor.trim() !== '' && Number.isFinite(numero) && numero > 0 ? numero : null;
+  }
 }
+
+

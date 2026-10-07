@@ -66,6 +66,46 @@ describe('FiltroAlojamientosService', () => {
     expect(ids(service.aplicar(alojamientos, filtro))).toEqual([4]);
   });
 
+  it('should filter by number of guests using the capacity', () => {
+    const lista = [
+      { ...crearAlojamiento(1, 'Bogotá', 'Apartamento'), capacidad: 2 },
+      { ...crearAlojamiento(2, 'Cartagena', 'Apartamento'), capacidad: 5 },
+      { ...crearAlojamiento(3, 'Guatapé', 'Cabaña'), capacidad: 6 },
+    ];
+    const filtro = { ...FILTRO_VACIO, huespedes: 5 };
+
+    expect(ids(service.aplicar(lista, filtro))).toEqual([2, 3]);
+  });
+
+  it('should filter by maximum price per night, including the limit', () => {
+    const lista = [
+      { ...crearAlojamiento(1, 'Bogotá', 'Apartamento'), precioNoche: 180000 },
+      { ...crearAlojamiento(2, 'Cartagena', 'Apartamento'), precioNoche: 420000 },
+      { ...crearAlojamiento(3, 'Guatapé', 'Cabaña'), precioNoche: 350000 },
+    ];
+    const filtro = { ...FILTRO_VACIO, precioMaximo: 350000 };
+
+    expect(ids(service.aplicar(lista, filtro))).toEqual([1, 3]);
+  });
+
+  it('should combine guests, maximum price, city and type', () => {
+    const lista = [
+      { ...crearAlojamiento(1, 'Bogotá', 'Casa'), capacidad: 8, precioNoche: 520000 },
+      { ...crearAlojamiento(2, 'Bogotá', 'Casa'), capacidad: 8, precioNoche: 300000 },
+      { ...crearAlojamiento(3, 'Bogotá', 'Casa'), capacidad: 2, precioNoche: 300000 },
+      { ...crearAlojamiento(4, 'Bogotá', 'Apartamento'), capacidad: 8, precioNoche: 300000 },
+      { ...crearAlojamiento(5, 'Medellín', 'Casa'), capacidad: 8, precioNoche: 300000 },
+    ];
+    const filtro = {
+      ciudad: 'Bogotá',
+      tipo: 'Casa' as const,
+      huespedes: 6,
+      precioMaximo: 400000,
+    };
+
+    expect(ids(service.aplicar(lista, filtro))).toEqual([2]);
+  });
+
   it('should return an empty list when nothing matches', () => {
     const filtro = { ...FILTRO_VACIO, ciudad: 'Guatapé', tipo: 'Casa' as const };
 

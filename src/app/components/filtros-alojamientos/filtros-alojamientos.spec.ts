@@ -26,6 +26,16 @@ describe('FiltrosAlojamientos', () => {
     select.dispatchEvent(new Event('change'));
   }
 
+  function escribir(idInput: string, valor: string): void {
+    const input = element.querySelector(`#${idInput}`) as HTMLInputElement;
+    input.value = valor;
+    input.dispatchEvent(new Event('input'));
+  }
+
+  function valorDe(idInput: string): string {
+    return (element.querySelector(`#${idInput}`) as HTMLInputElement).value;
+  }
+
   function textos(selector: string): (string | undefined)[] {
     return Array.from(element.querySelectorAll(selector)).map((opcion) =>
       opcion.textContent?.trim(),
@@ -55,6 +65,56 @@ describe('FiltrosAlojamientos', () => {
     elegir('filtro-ciudad', '');
 
     expect(fixture.componentInstance.filtro().ciudad).toBeNull();
+  });
+
+  it('should update the guests of the filter', () => {
+    escribir('filtro-huespedes', '4');
+
+    expect(fixture.componentInstance.filtro().huespedes).toBe(4);
+  });
+
+  it('should ignore guests that are empty, zero, negative or decimal', () => {
+    for (const valor of ['', '0', '-2', '2.5']) {
+      escribir('filtro-huespedes', valor);
+
+      expect(fixture.componentInstance.filtro().huespedes).toBeNull();
+    }
+  });
+
+  it('should update the maximum price and keep the other criteria', () => {
+    elegir('filtro-ciudad', 'Bogotá');
+    escribir('filtro-precio-maximo', '300000');
+
+    expect(fixture.componentInstance.filtro()).toEqual({
+      ...FILTRO_VACIO,
+      ciudad: 'Bogotá',
+      precioMaximo: 300000,
+    });
+  });
+
+  it('should clear the maximum price when the field is emptied', () => {
+    escribir('filtro-precio-maximo', '300000');
+    escribir('filtro-precio-maximo', '');
+
+    expect(fixture.componentInstance.filtro().precioMaximo).toBeNull();
+  });
+
+  it('should show the current values of the filter in the fields', async () => {
+    fixture.componentRef.setInput('filtro', {
+      ...FILTRO_VACIO,
+      huespedes: 3,
+      precioMaximo: 250000,
+    });
+    await fixture.whenStable();
+
+    expect(valorDe('filtro-huespedes')).toBe('3');
+    expect(valorDe('filtro-precio-maximo')).toBe('250000');
+
+    fixture.componentRef.setInput('filtro', FILTRO_VACIO);
+    await fixture.whenStable();
+
+    expect(valorDe('filtro-huespedes')).toBe('');
+    expect(valorDe('filtro-precio-maximo')).toBe('');
   });
 
   it('should update the type and keep the other criteria', () => {
