@@ -39,4 +39,8 @@
 
 .alojamiento-card-estrella {
   color: #ffd60a;
+
+  .alojamiento-card-detalle {
+    color: var(--kuppo-wine);
+  }
 }

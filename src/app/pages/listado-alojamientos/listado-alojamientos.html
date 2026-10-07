@@ -8,7 +8,7 @@
       <div class="row g-4">
         @for (alojamiento of alojamientosFiltrados(); track alojamiento.id) {
           <div class="col-12 col-sm-6 col-lg-4">
-            <article>{{ alojamiento.nombre }} - {{ alojamiento.ciudad }}</article>
+            <app-alojamiento-card [alojamiento]="alojamiento" />
           </div>
         }
       </div>

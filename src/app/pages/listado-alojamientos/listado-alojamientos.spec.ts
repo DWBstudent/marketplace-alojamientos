@@ -5,6 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Alojamiento, TipoAlojamiento } from '../../models/alojamiento';
 import { FILTRO_VACIO } from '../../models/filtro-busqueda';
 import { ListadoAlojamientos } from './listado-alojamientos';
+import { provideRouter } from '@angular/router';
 
 function crearAlojamiento(id: number, ciudad: string, tipo: TipoAlojamiento): Alojamiento {
   return {
@@ -45,7 +46,7 @@ describe('ListadoAlojamientos', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ListadoAlojamientos],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     http = TestBed.inject(HttpTestingController);

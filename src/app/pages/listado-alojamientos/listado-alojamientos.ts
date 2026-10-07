@@ -5,10 +5,11 @@ import { FiltrosAlojamientos } from '../../components/filtros-alojamientos/filtr
 import { FILTRO_VACIO, FiltroBusqueda } from '../../models/filtro-busqueda';
 import { AlojamientoService } from '../../services/alojamiento.service';
 import { FiltroAlojamientosService } from '../../services/filtro-alojamientos.service';
+import { AlojamientoCard } from '../../components/alojamiento-card/alojamiento-card';
 
 @Component({
   selector: 'app-listado-alojamientos',
-  imports: [FiltrosAlojamientos],
+  imports: [FiltrosAlojamientos, AlojamientoCard],
   templateUrl: './listado-alojamientos.html',
   styleUrl: './listado-alojamientos.css',
 })

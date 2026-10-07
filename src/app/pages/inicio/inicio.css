@@ -1,3 +1,6 @@
 .hero-description {
   max-width: 40rem;
 }
+.destacados {
+  background-color: var(--kuppo-warm-gray);
+}

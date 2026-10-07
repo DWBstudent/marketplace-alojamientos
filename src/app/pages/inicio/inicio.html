@@ -10,3 +10,29 @@
     <i class="fa-solid fa-magnifying-glass"></i> Explorar alojamientos
   </a>
 </section>
+<!--destacados-->
+<section class="destacados py-4" aria-labelledby="titulo-destacados">
+  <div class="container">
+    <h2 id="titulo-destacados" class="fs-4 text-center text-uppercase mb-4">Los imperdibles</h2>
+
+    @if (alojamientoService.estaCargando()) {
+      <div class="text-center py-4">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Cargando alojamientos…</span>
+        </div>
+      </div>
+    } @else if (alojamientoService.mensajeError()) {
+      <div class="alert alert-danger" role="alert">{{ alojamientoService.mensajeError() }}</div>
+    } @else if (destacados().length === 0) {
+      <p class="text-center text-secondary mb-0">Por ahora no hay alojamientos destacados.</p>
+    } @else {
+      <div class="row g-4">
+        @for (alojamiento of destacados(); track alojamiento.id) {
+          <div class="col-12 col-md-6 col-lg-4">
+            <app-alojamiento-card [alojamiento]="alojamiento" />
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
