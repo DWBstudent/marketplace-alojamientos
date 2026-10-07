@@ -1,0 +1,23 @@
+<div class="row g-4">
+  <section class="col-12 col-md-6" aria-labelledby="titulo-servicios">
+    <h2 id="titulo-servicios" class="h5">Servicios disponibles</h2>
+    <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+      @for (servicio of alojamiento().servicios; track servicio) {
+        <li class="badge detalle-servicio">{{ servicio }}</li>
+      } @empty {
+        <li class="text-secondary">Este alojamiento no tiene servicios registrados.</li>
+      }
+    </ul>
+  </section>
+
+  <section class="col-12 col-md-6" aria-labelledby="titulo-reglas">
+    <h2 id="titulo-reglas" class="h5">Reglas básicas</h2>
+    <ul class="detalle-reglas list-unstyled mb-0">
+      @for (regla of alojamiento().reglas; track regla) {
+        <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> {{ regla }}</li>
+      } @empty {
+        <li class="text-secondary">Este alojamiento no tiene reglas registradas.</li>
+      }
+    </ul>
+  </section>
+</div>

@@ -2,14 +2,16 @@ import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map, switchMap } from 'rxjs';
+import { DetalleCaracteristicas } from '../../components/detalle-caracteristicas/detalle-caracteristicas';
+import { DetalleServiciosReglas } from '../../components/detalle-servicios-reglas/detalle-servicios-reglas';
 
 import { AlojamientoService } from '../../services/alojamiento.service';
 
 @Component({
   selector: 'app-detalle-alojamiento',
-  imports: [RouterLink],
+  imports: [RouterLink, DetalleCaracteristicas, DetalleServiciosReglas],
   templateUrl: './detalle-alojamiento.html',
-  styleUrl: './detalle-alojamiento.css',
+  styleUrl: './detalle-alojamiento.css',x
 })
 export class DetalleAlojamiento {
   private readonly route = inject(ActivatedRoute);
