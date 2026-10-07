@@ -1,11 +1,11 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, input, linkedSignal } from '@angular/core';
-
+import { RouterLink } from '@angular/router';
 import { Alojamiento } from '../../models/alojamiento';
 
 @Component({
   selector: 'app-alojamiento-card',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe,RouterLink],
   templateUrl: './alojamiento-card.html',
   styleUrl: './alojamiento-card.css',
 })
