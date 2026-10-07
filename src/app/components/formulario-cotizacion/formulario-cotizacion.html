@@ -1,0 +1,78 @@
+<form class="card p-3" novalidate (submit)="enviar($event)">
+  <h2 class="h5 mb-3">Cotiza tu estancia</h2>
+
+  <div class="mb-3">
+    <label class="form-label" for="fecha-llegada">Fecha de llegada</label>
+    <input
+      #llegada
+      id="fecha-llegada"
+      type="date"
+      class="form-control"
+      [class.is-invalid]="errores().fechaLlegada"
+      [min]="hoy()"
+      [value]="estancia().fechaLlegada"
+      (input)="cambiarLlegada(llegada.value)"
+    />
+    @if (errores().fechaLlegada; as mensaje) {
+      <div class="invalid-feedback d-block">{{ mensaje }}</div>
+    }
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="fecha-salida">Fecha de salida</label>
+    <input
+      #salida
+      id="fecha-salida"
+      type="date"
+      class="form-control"
+      [class.is-invalid]="errores().fechaSalida"
+      [min]="estancia().fechaLlegada || hoy()"
+      [value]="estancia().fechaSalida"
+      (input)="cambiarSalida(salida.value)"
+    />
+    @if (errores().fechaSalida; as mensaje) {
+      <div class="invalid-feedback d-block">{{ mensaje }}</div>
+    }
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="huespedes">Huéspedes</label>
+    <div class="input-group">
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        aria-label="Menos huéspedes"
+        (click)="cambiarHuespedes(-1)"
+      >
+        <i class="fa-solid fa-minus"></i>
+      </button>
+      <input
+        #huespedes
+        id="huespedes"
+        type="number"
+        class="form-control text-center"
+        [class.is-invalid]="errores().huespedes"
+        min="1"
+        [max]="capacidad()"
+        [value]="estancia().huespedes ?? ''"
+        (input)="escribirHuespedes(huespedes.value)"
+      />
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        aria-label="Más huéspedes"
+        (click)="cambiarHuespedes(1)"
+      >
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </div>
+    <div class="form-text">
+      Máximo {{ capacidad() }} {{ capacidad() === 1 ? 'huésped' : 'huéspedes' }}
+    </div>
+    @if (errores().huespedes; as mensaje) {
+      <div class="invalid-feedback d-block">{{ mensaje }}</div>
+    }
+  </div>
+
+  <button type="submit" class="btn btn-kuppo w-100">Cotizar</button>
+</form>
