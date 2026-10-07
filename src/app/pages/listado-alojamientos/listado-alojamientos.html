@@ -1,1 +1,9 @@
-<p>listado-alojamientos works!</p>
+<section class="listado">
+  <h1>Alojamientos</h1>
+
+  <div class="cuadricula">
+    @for (alojamiento of alojamientos(); track alojamiento.id) {
+      <article>{{ alojamiento.nombre }} - {{ alojamiento.ciudad }}</article>
+    }
+  </div>
+</section>
