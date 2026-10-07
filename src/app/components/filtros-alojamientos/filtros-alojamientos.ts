@@ -1,7 +1,8 @@
-import { Component, input, model } from '@angular/core';
+import { Component, inject, input, model } from '@angular/core';
 
 import { TipoAlojamiento } from '../../models/alojamiento';
 import { FiltroBusqueda } from '../../models/filtro-busqueda';
+import { FiltroAlojamientosService } from '../../services/filtro-alojamientos.service';
 
 @Component({
   selector: 'app-filtros-alojamientos',
@@ -9,6 +10,8 @@ import { FiltroBusqueda } from '../../models/filtro-busqueda';
   styleUrl: './filtros-alojamientos.css',
 })
 export class FiltrosAlojamientos {
+  private readonly filtroService = inject(FiltroAlojamientosService);
+
   readonly ciudades = input.required<string[]>();
   readonly tipos = input.required<TipoAlojamiento[]>();
   readonly filtro = model.required<FiltroBusqueda>();
@@ -22,5 +25,9 @@ export class FiltrosAlojamientos {
       ...actual,
       tipo: valor === '' ? null : (valor as TipoAlojamiento),
     }));
+  }
+
+  protected limpiarFiltros(): void {
+    this.filtro.set(this.filtroService.limpiar());
   }
 }
