@@ -113,4 +113,11 @@ describe('DetalleAlojamiento', () => {
       'No fue posible cargar el alojamiento.',
     );
   });
+
+  it('should reserve a column for the quotation', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    expect(harness.routeNativeElement?.querySelector('aside')).not.toBeNull();
+  });
 });
