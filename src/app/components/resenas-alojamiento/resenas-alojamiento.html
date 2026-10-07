@@ -1,0 +1,20 @@
+<section class="resenas" aria-label="Calificación y reseñas">
+  <h2 class="h4">Calificación y reseñas</h2>
+  <p class="resenas-resumen">★ {{ calificacion() }} · {{ cantidad() }} reseña(s)</p>
+
+  @if (cantidad() === 0) {
+    <p class="resenas-vacio">Este alojamiento aún no tiene reseñas.</p>
+  } @else {
+    @for (resena of resenas(); track resena.id) {
+      <article class="resena card mb-3">
+        <div class="card-body">
+          <header class="d-flex justify-content-between">
+            <strong>{{ resena.usuario }}</strong>
+            <span>★ {{ resena.calificacion }}</span>
+          </header>
+          <p class="mb-0">{{ resena.comentario }}</p>
+        </div>
+      </article>
+    }
+  }
+</section>
