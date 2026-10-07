@@ -32,6 +32,14 @@ export class AlojamientoService {
     );
   }
 
+  getDestacados(cantidad = 3): Observable<Alojamiento[]> {
+    return this.getAlojamientos().pipe(
+      map(
+        (alojamientos) => [...alojamientos].sort((a, b) => b.calificacion - a.calificacion).slice(0, cantidad),
+      ),
+    );
+  }
+
   getAlojamientoPorId(id: number): Observable<Alojamiento | undefined> {
     return this.conEstado(
       () =>
