@@ -6,7 +6,7 @@ import { AlojamientoService } from '../../services/alojamiento.service';
   selector: 'app-listado-alojamientos',
   imports: [],
   templateUrl: './listado-alojamientos.html',
-  styleUrl: './listado-alojamientos.css'
+  styleUrl: './listado-alojamientos.css',
 })
 export class ListadoAlojamientos {
   private readonly alojamientoService = inject(AlojamientoService);
