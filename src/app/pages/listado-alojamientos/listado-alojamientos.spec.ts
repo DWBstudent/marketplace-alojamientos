@@ -7,7 +7,13 @@ import { Alojamiento, TipoAlojamiento } from '../../models/alojamiento';
 import { FILTRO_VACIO } from '../../models/filtro-busqueda';
 import { ListadoAlojamientos } from './listado-alojamientos';
 
-function crearAlojamiento(id: number, ciudad: string, tipo: TipoAlojamiento): Alojamiento {
+function crearAlojamiento(
+  id: number,
+  ciudad: string,
+  tipo: TipoAlojamiento,
+  capacidad = 4,
+  precioNoche = 100000,
+): Alojamiento {
   return {
     id,
     nombre: `Alojamiento ${id}`,
@@ -15,11 +21,11 @@ function crearAlojamiento(id: number, ciudad: string, tipo: TipoAlojamiento): Al
     ciudad,
     ubicacion: 'Centro',
     tipo,
-    capacidad: 4,
+    capacidad,
     habitaciones: 2,
     camas: 2,
     banos: 1,
-    precioNoche: 100000,
+    precioNoche,
     tarifaLimpieza: 20000,
     calificacion: 4.5,
     activo: true,
@@ -37,10 +43,10 @@ describe('ListadoAlojamientos', () => {
   let element: HTMLElement;
 
   const alojamientos = [
-    crearAlojamiento(1, 'Bogotá', 'Apartamento'),
-    crearAlojamiento(2, 'Cartagena', 'Apartamento'),
-    crearAlojamiento(3, 'Guatapé', 'Cabaña'),
-    crearAlojamiento(4, 'Bogotá', 'Casa'),
+    crearAlojamiento(1, 'Bogotá', 'Apartamento', 2, 180000),
+    crearAlojamiento(2, 'Cartagena', 'Apartamento', 5, 420000),
+    crearAlojamiento(3, 'Guatapé', 'Cabaña', 6, 350000),
+    crearAlojamiento(4, 'Bogotá', 'Casa', 8, 300000),
   ];
 
   beforeEach(async () => {
@@ -94,7 +100,11 @@ describe('ListadoAlojamientos', () => {
   it('should show only the lodgings of the chosen city', async () => {
     await cargarDatos();
 
-    component.filtro.set({ ...FILTRO_VACIO, ciudad: 'Bogotá' });
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      ciudad: 'Bogotá',
+    });
+
     await fixture.whenStable();
 
     expect(cantidadMostrada()).toBe(2);
@@ -113,6 +123,32 @@ describe('ListadoAlojamientos', () => {
     expect(cantidadMostrada()).toBe(2);
   });
 
+  it('should show only lodgings that can accommodate the selected guests', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      huespedes: 5,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(3);
+  });
+
+  it('should show only lodgings within the maximum price', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      precioMaximo: 350000,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(3);
+  });
+
   it('should combine city and type', async () => {
     await cargarDatos();
 
@@ -125,6 +161,107 @@ describe('ListadoAlojamientos', () => {
     await fixture.whenStable();
 
     expect(cantidadMostrada()).toBe(1);
+  });
+
+  it('should combine city and guests', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      ciudad: 'Bogotá',
+      huespedes: 5,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(1);
+  });
+
+  it('should combine city and maximum price', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      ciudad: 'Bogotá',
+      precioMaximo: 300000,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(2);
+  });
+
+  it('should combine type and guests', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      tipo: 'Apartamento',
+      huespedes: 5,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(1);
+  });
+
+  it('should combine type and maximum price', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      tipo: 'Apartamento',
+      precioMaximo: 350000,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(1);
+  });
+
+  it('should combine guests and maximum price', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      huespedes: 7,
+      precioMaximo: 350000,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(1);
+  });
+
+  it('should combine all four filters', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ciudad: 'Bogotá',
+      tipo: 'Casa',
+      huespedes: 6,
+      precioMaximo: 300000,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(1);
+  });
+
+  it('should show no results when the filters do not match any lodging', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ciudad: 'Bogotá',
+      tipo: 'Cabaña',
+      huespedes: 8,
+      precioMaximo: 200000,
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(0);
+    expect(element.textContent).toContain('No encontramos alojamientos');
   });
 
   it('should show every lodging again when the filter is cleared', async () => {
@@ -159,21 +296,6 @@ describe('ListadoAlojamientos', () => {
 
   it('should show an empty state when there are no lodgings', async () => {
     await cargarDatos([]);
-
-    expect(cantidadMostrada()).toBe(0);
-    expect(element.textContent).toContain('No encontramos alojamientos');
-  });
-
-  it('should show an empty state when filters return no lodgings', async () => {
-    await cargarDatos();
-
-    component.filtro.set({
-      ...FILTRO_VACIO,
-      ciudad: 'Bogotá',
-      tipo: 'Cabaña',
-    });
-
-    await fixture.whenStable();
 
     expect(cantidadMostrada()).toBe(0);
     expect(element.textContent).toContain('No encontramos alojamientos');
