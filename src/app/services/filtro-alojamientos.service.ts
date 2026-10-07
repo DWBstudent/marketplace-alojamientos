@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Alojamiento } from '../models/alojamiento';
-import { FiltroBusqueda } from '../models/filtro-busqueda';
-
+import { FILTRO_VACIO, FiltroBusqueda } from '../models/filtro-busqueda';
 @Injectable({ providedIn: 'root' })
 export class FiltroAlojamientosService {
   aplicar(alojamientos: Alojamiento[], filtro: FiltroBusqueda): Alojamiento[] {
@@ -18,5 +17,8 @@ export class FiltroAlojamientosService {
 
   private cumpleTipo(alojamiento: Alojamiento, filtro: FiltroBusqueda): boolean {
     return filtro.tipo === null || alojamiento.tipo === filtro.tipo;
+  }
+  limpiar(): FiltroBusqueda {
+    return { ...FILTRO_VACIO };
   }
 }
