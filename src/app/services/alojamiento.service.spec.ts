@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { ReservaService } from './reserva.service';
 
 import { Alojamiento } from '../models/alojamiento';
 import { Resena } from '../models/resena';
@@ -302,5 +303,40 @@ describe('AlojamientoService', () => {
     expect(resultado).toEqual([]);
     expect(service.mensajeError()).toBe('No pudimos cargar los alojamientos. Intenta de nuevo.');
     expect(service.estaCargando()).toBe(false);
+  });
+});
+describe('ReservaService', () => {
+  const datos = {
+    alojamientoId: 1,
+    alojamientoNombre: 'Casa Prueba',
+    ciudad: 'Yopal',
+    fechaLlegada: '2099-01-10',
+    fechaSalida: '2099-01-12',
+    huespedes: 2,
+    noches: 2,
+    total: 500000,
+    nombreHuesped: 'Ana',
+    correoHuesped: 'ana@correo.com'
+  };
+
+  beforeEach(() => {
+    localStorage.clear();
+    TestBed.configureTestingModule({});
+  });
+
+  it('crea una reserva CONFIRMADA', () => {
+    const servicio = TestBed.inject(ReservaService);
+    const reserva = servicio.crearReserva(datos);
+    expect(reserva.estado).toBe('CONFIRMADA');
+    expect(servicio.reservas().length).toBe(1);
+  });
+
+  it('persiste las reservas en localStorage', () => {
+    TestBed.inject(ReservaService).crearReserva(datos);
+    expect(localStorage.getItem('marketplace-reservas')).toContain('Casa Prueba');
+  });
+
+  it('empieza vacío sin datos guardados', () => {
+    expect(TestBed.inject(ReservaService).reservas()).toEqual([]);
   });
 });

@@ -2,7 +2,7 @@ export type EstadoReserva = 'CONFIRMADA';
 
 export interface Reserva {
   id: string;
-  alojamientoId: number | string;
+  alojamientoId: number;
   alojamientoNombre: string;
   ciudad: string;
   fechaLlegada: string;
