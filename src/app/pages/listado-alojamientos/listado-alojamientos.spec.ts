@@ -1,11 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { Alojamiento, TipoAlojamiento } from '../../models/alojamiento';
 import { FILTRO_VACIO } from '../../models/filtro-busqueda';
 import { ListadoAlojamientos } from './listado-alojamientos';
-import { provideRouter } from '@angular/router';
 
 function crearAlojamiento(id: number, ciudad: string, tipo: TipoAlojamiento): Alojamiento {
   return {
@@ -53,11 +53,13 @@ describe('ListadoAlojamientos', () => {
     fixture = TestBed.createComponent(ListadoAlojamientos);
     component = fixture.componentInstance;
     element = fixture.nativeElement as HTMLElement;
+
     fixture.detectChanges();
   });
 
-  async function cargarDatos(): Promise<void> {
-    http.expectOne('data/marketplace-data.json').flush({ alojamientos, resenas: [] });
+  async function cargarDatos(datos = alojamientos): Promise<void> {
+    http.expectOne('data/marketplace-data.json').flush({ alojamientos: datos, resenas: [] });
+
     await fixture.whenStable();
   }
 
@@ -85,6 +87,7 @@ describe('ListadoAlojamientos', () => {
     await cargarDatos();
 
     expect(opciones('filtro-ciudad')).toEqual(['Todas', 'Bogotá', 'Cartagena', 'Guatapé']);
+
     expect(opciones('filtro-tipo')).toEqual(['Todos', 'Apartamento', 'Cabaña', 'Casa']);
   });
 
@@ -100,7 +103,11 @@ describe('ListadoAlojamientos', () => {
   it('should show only the lodgings of the chosen type', async () => {
     await cargarDatos();
 
-    component.filtro.set({ ...FILTRO_VACIO, tipo: 'Apartamento' });
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      tipo: 'Apartamento',
+    });
+
     await fixture.whenStable();
 
     expect(cantidadMostrada()).toBe(2);
@@ -109,7 +116,12 @@ describe('ListadoAlojamientos', () => {
   it('should combine city and type', async () => {
     await cargarDatos();
 
-    component.filtro.set({ ...FILTRO_VACIO, ciudad: 'Bogotá', tipo: 'Casa' });
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      ciudad: 'Bogotá',
+      tipo: 'Casa',
+    });
+
     await fixture.whenStable();
 
     expect(cantidadMostrada()).toBe(1);
@@ -118,9 +130,15 @@ describe('ListadoAlojamientos', () => {
   it('should show every lodging again when the filter is cleared', async () => {
     await cargarDatos();
 
-    component.filtro.set({ ...FILTRO_VACIO, ciudad: 'Bogotá' });
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      ciudad: 'Bogotá',
+    });
+
     await fixture.whenStable();
+
     component.filtro.set(FILTRO_VACIO);
+
     await fixture.whenStable();
 
     expect(cantidadMostrada()).toBe(4);
@@ -130,10 +148,34 @@ describe('ListadoAlojamientos', () => {
     await cargarDatos();
 
     const select = element.querySelector('#filtro-ciudad') as HTMLSelectElement;
+
     select.value = 'Cartagena';
     select.dispatchEvent(new Event('change'));
+
     await fixture.whenStable();
 
     expect(cantidadMostrada()).toBe(1);
+  });
+
+  it('should show an empty state when there are no lodgings', async () => {
+    await cargarDatos([]);
+
+    expect(cantidadMostrada()).toBe(0);
+    expect(element.textContent).toContain('No encontramos alojamientos');
+  });
+
+  it('should show an empty state when filters return no lodgings', async () => {
+    await cargarDatos();
+
+    component.filtro.set({
+      ...FILTRO_VACIO,
+      ciudad: 'Bogotá',
+      tipo: 'Cabaña',
+    });
+
+    await fixture.whenStable();
+
+    expect(cantidadMostrada()).toBe(0);
+    expect(element.textContent).toContain('No encontramos alojamientos');
   });
 });
