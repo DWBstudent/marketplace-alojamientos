@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Alojamiento } from '../../models/alojamiento';
@@ -24,7 +24,11 @@ function crearAlojamiento(id: number, activo = true): Alojamiento {
     calificacion: 4.5,
     activo,
     imagenPrincipal: 'assets/images/prueba.jpg',
-    imagenes: ['assets/images/prueba.jpg'],
+    imagenes: [
+      'assets/images/prueba-1.jpg',
+      'assets/images/prueba-2.jpg',
+      'assets/images/prueba-3.jpg',
+    ],
     servicios: ['Wi-Fi'],
     reglas: ['No fumar'],
   };
@@ -33,17 +37,25 @@ function crearAlojamiento(id: number, activo = true): Alojamiento {
 describe('DetalleAlojamiento', () => {
   let http: HttpTestingController;
   let harness: RouterTestingHarness;
+  let router: Router;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'alojamientos/:id', component: DetalleAlojamiento }]),
+        provideRouter([
+          {
+            path: 'alojamientos/:id',
+            component: DetalleAlojamiento,
+          },
+        ]),
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
     });
+
     http = TestBed.inject(HttpTestingController);
     harness = await RouterTestingHarness.create();
+    router = TestBed.inject(Router);
   });
 
   async function abrir(id: string): Promise<void> {
@@ -53,6 +65,7 @@ describe('DetalleAlojamiento', () => {
 
   function cargar(alojamientos: Alojamiento[]): void {
     http.expectOne('data/marketplace-data.json').flush({ alojamientos, resenas: [] });
+
     harness.detectChanges();
   }
 
@@ -68,6 +81,9 @@ describe('DetalleAlojamiento', () => {
 
   it('should show the general data of the lodging of the route', async () => {
     await abrir('2');
+
+    expect(router.url).toBe('/alojamientos/2');
+
     cargar([crearAlojamiento(1), crearAlojamiento(2)]);
 
     expect(texto()).toContain('Alojamiento 2');
@@ -75,6 +91,18 @@ describe('DetalleAlojamiento', () => {
     expect(texto()).toContain('Chapinero, Bogotá');
     expect(texto()).toContain('Apartamento');
     expect(texto()).not.toContain('Alojamiento 1');
+  });
+
+  it('should show all lodging gallery images', async () => {
+    await abrir('2');
+    cargar([crearAlojamiento(1), crearAlojamiento(2)]);
+
+    const imagenes = harness.routeNativeElement?.querySelectorAll('img');
+
+    expect(imagenes?.length).toBe(3);
+    expect(imagenes?.[0].getAttribute('src')).toBe('assets/images/prueba-1.jpg');
+    expect(imagenes?.[1].getAttribute('src')).toBe('assets/images/prueba-2.jpg');
+    expect(imagenes?.[2].getAttribute('src')).toBe('assets/images/prueba-3.jpg');
   });
 
   it('should link back to the list', async () => {
@@ -103,10 +131,12 @@ describe('DetalleAlojamiento', () => {
 
   it('should show an error message when the lodging cannot be loaded', async () => {
     await abrir('1');
+
     http.expectOne('data/marketplace-data.json').flush('Error', {
       status: 500,
       statusText: 'Server Error',
     });
+
     harness.detectChanges();
 
     expect(harness.routeNativeElement?.querySelector('.alert-danger')?.textContent).toContain(
