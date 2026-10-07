@@ -1,7 +1,7 @@
 import { registerLocaleData } from '@angular/common';
 import localeEsCo from '@angular/common/locales/es-CO';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideRouter } from '@angular/router';
 import { Alojamiento } from '../../models/alojamiento';
 import { AlojamientoCard } from './alojamiento-card';
 
@@ -34,6 +34,7 @@ describe('AlojamientoCard', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AlojamientoCard],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AlojamientoCard);
@@ -68,5 +69,13 @@ describe('AlojamientoCard', () => {
 
     expect(elemento.querySelector('img')).toBeNull();
     expect(elemento.querySelector('.alojamiento-card-sin-imagen')).not.toBeNull();
+  });
+
+  it('should link to the lodging detail', () => {
+    const enlace = (fixture.nativeElement as HTMLElement).querySelector(
+      'a.stretched-link',
+    ) as HTMLAnchorElement;
+
+    expect(enlace.getAttribute('href')).toMatch(/\/alojamientos\/1$/);
   });
 });
