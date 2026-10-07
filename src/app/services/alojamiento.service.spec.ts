@@ -253,4 +253,54 @@ describe('AlojamientoService', () => {
 
     expect(service.estaCargando()).toBe(false);
   });
+
+  it('should return the best rated lodgings, highest first', () => {
+    let resultado: Alojamiento[] = [];
+
+    service.getDestacados().subscribe((alojamientos) => (resultado = alojamientos));
+
+    http.expectOne('data/marketplace-data.json').flush({
+      alojamientos: [
+        { ...crearAlojamiento(1, true), calificacion: 4.2 },
+        { ...crearAlojamiento(2, true), calificacion: 4.9 },
+        { ...crearAlojamiento(3, true), calificacion: 4.5 },
+        { ...crearAlojamiento(4, true), calificacion: 4.7 },
+      ],
+      resenas: [],
+    });
+
+    expect(resultado.map((alojamiento) => alojamiento.id)).toEqual([2, 4, 3]);
+  });
+
+  it('should not feature inactive lodgings even if they have the best rating', () => {
+    let resultado: Alojamiento[] = [];
+
+    service.getDestacados().subscribe((alojamientos) => (resultado = alojamientos));
+
+    http.expectOne('data/marketplace-data.json').flush({
+      alojamientos: [
+        { ...crearAlojamiento(1, true), calificacion: 4.2 },
+        { ...crearAlojamiento(2, false), calificacion: 5 },
+        { ...crearAlojamiento(3, true), calificacion: 4.4 },
+      ],
+      resenas: [],
+    });
+
+    expect(resultado.map((alojamiento) => alojamiento.id)).toEqual([3, 1]);
+  });
+
+  it('should return an empty list and set an error when loading featured lodgings fails', () => {
+    let resultado: Alojamiento[] = [];
+
+    service.getDestacados().subscribe((alojamientos) => (resultado = alojamientos));
+
+    http.expectOne('data/marketplace-data.json').flush('Error', {
+      status: 500,
+      statusText: 'Server Error',
+    });
+
+    expect(resultado).toEqual([]);
+    expect(service.mensajeError()).toBe('No pudimos cargar los alojamientos. Intenta de nuevo.');
+    expect(service.estaCargando()).toBe(false);
+  });
 });
