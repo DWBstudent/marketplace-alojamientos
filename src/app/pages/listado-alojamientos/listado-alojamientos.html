@@ -1,10 +1,17 @@
 <section class="container py-4">
   <h1>Alojamientos</h1>
   <div class="row g-4">
-    @for (alojamiento of alojamientos(); track alojamiento.id) {
-      <div class="col-12 col-sm-6 col-lg-4">
-        <article>{{ alojamiento.nombre }} - {{ alojamiento.ciudad }}</article>
+    <div class="col-12 col-lg-3">
+      <app-filtros-alojamientos [ciudades]="ciudades()" [tipos]="tipos()" [(filtro)]="filtro" />
+    </div>
+    <div class="col-12 col-lg-9">
+      <div class="row g-4">
+        @for (alojamiento of alojamientosFiltrados(); track alojamiento.id) {
+          <div class="col-12 col-sm-6 col-lg-4">
+            <article>{{ alojamiento.nombre }} - {{ alojamiento.ciudad }}</article>
+          </div>
+        }
       </div>
-    }
+    </div>
   </div>
 </section>
