@@ -1,0 +1,42 @@
+.alojamiento-card {
+  overflow: hidden;
+  border-color: #f6f4f1;
+}
+
+.alojamiento-card-imagen {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.alojamiento-card-sin-imagen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f6f4f1;
+  color: #a4161a;
+  font-size: 2.5rem;
+}
+
+.card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  min-height: 2.4em;
+}
+
+.alojamiento-card-servicio {
+  background-color: #fff3b0;
+  color: #a4161a;
+  font-weight: 500;
+}
+
+.alojamiento-card-precio {
+  color: #a4161a;
+}
+
+.alojamiento-card-estrella {
+  color: #ffd60a;
+}
