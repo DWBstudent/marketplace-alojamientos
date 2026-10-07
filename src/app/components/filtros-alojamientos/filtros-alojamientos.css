@@ -1,0 +1,7 @@
+:host {
+  display: block;
+}
+
+.filtros {
+  background-color: var(--kuppo-warm-gray);
+}
