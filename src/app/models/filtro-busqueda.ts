@@ -6,3 +6,9 @@ export interface FiltroBusqueda {
   huespedes: number | null;
   precioMaximo: number | null;
 }
+export const FILTRO_VACIO: FiltroBusqueda = {
+  ciudad: null,
+  tipo: null,
+  huespedes: null,
+  precioMaximo: null,
+};

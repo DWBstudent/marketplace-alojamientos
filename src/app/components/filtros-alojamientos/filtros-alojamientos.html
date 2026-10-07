@@ -1,0 +1,25 @@
+<section class="filtros p-3 rounded" aria-label="Filtros de búsqueda">
+  <h2 class="h6 text-uppercase mb-3">Filtros</h2>
+
+  <div class="mb-3">
+    <label class="form-label" for="filtro-ciudad">Ciudad</label>
+    <select #selectCiudad id="filtro-ciudad" class="form-select"
+            (change)="cambiarCiudad(selectCiudad.value)">
+      <option value="" [selected]="filtro().ciudad === null">Todas</option>
+      @for (ciudad of ciudades(); track ciudad) {
+        <option [value]="ciudad" [selected]="filtro().ciudad === ciudad">{{ ciudad }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="filtro-tipo">Tipo</label>
+    <select #selectTipo id="filtro-tipo" class="form-select"
+            (change)="cambiarTipo(selectTipo.value)">
+      <option value="" [selected]="filtro().tipo === null">Todos</option>
+      @for (tipo of tipos(); track tipo) {
+        <option [value]="tipo" [selected]="filtro().tipo === tipo">{{ tipo }}</option>
+      }
+    </select>
+  </div>
+</section>
