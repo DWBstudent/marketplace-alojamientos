@@ -57,7 +57,7 @@ The application is a frontend only: there is no backend, and the data comes from
 * Home page with the slogan, a short description and access to the search
 * Data service that reads the active lodgings from the JSON file, with loading and error states
 * Lodging card with photo, city, type, capacity, services, price and rating
-* Featured lodgings on the home page
+* - [x] Featured lodgings on the home page
 * Lodging list with filters: city and type are done, guests and maximum price are pending
 * Lodging detail with photos, services, rules and reviews
 * Quotation (nights, subtotal, cleaning fee, service fee and total)
