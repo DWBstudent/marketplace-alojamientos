@@ -11,8 +11,6 @@ import { Alojamiento } from '../../models/alojamiento';
 })
 export class AlojamientoCard {
   readonly alojamiento = input.required<Alojamiento>();
-
-  // Resets to false whenever the card receives a different lodging.
   protected readonly imagenFallida = linkedSignal({
     source: this.alojamiento,
     computation: () => false,
