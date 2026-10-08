@@ -1,42 +1,40 @@
 import { Injectable } from '@angular/core';
 
-export interface DatosCotizacion {
-  fechaLlegada: string;
-  fechaSalida: string;
-  huespedes: number | null;
-}
+import { DatosEstancia, ErroresEstancia } from '../models/estancia';
 
 @Injectable({ providedIn: 'root' })
 export class ValidacionCotizacionService {
-  validar(datos: DatosCotizacion, capacidad: number): string[] {
-    return [...this.validarFechas(datos), ...this.validarHuespedes(datos.huespedes, capacidad)];
+  validar(datos: DatosEstancia, capacidad: number): ErroresEstancia {
+    return { ...this.validarFechas(datos), ...this.validarHuespedes(datos.huespedes, capacidad) };
   }
 
-  private validarFechas(datos: DatosCotizacion): string[] {
-    if (!datos.fechaLlegada || !datos.fechaSalida) {
-      return ['Selecciona las fechas de llegada y salida.'];
+  private validarFechas(datos: DatosEstancia): ErroresEstancia {
+    const errores: ErroresEstancia = {};
+
+    if (!datos.fechaLlegada) {
+      errores.fechaLlegada = 'Selecciona la fecha de llegada.';
+    } else if (datos.fechaLlegada < this.fechaDeHoy()) {
+      errores.fechaLlegada = 'La fecha de llegada no puede ser anterior a hoy.';
     }
 
-    const errores: string[] = [];
-
-    if (datos.fechaLlegada < this.fechaDeHoy()) {
-      errores.push('La fecha de llegada no puede ser anterior a hoy.');
-    }
-    if (datos.fechaSalida <= datos.fechaLlegada) {
-      errores.push('La fecha de salida debe ser posterior a la de llegada.');
+    if (!datos.fechaSalida) {
+      errores.fechaSalida = 'Selecciona la fecha de salida.';
+    } else if (datos.fechaLlegada && datos.fechaSalida <= datos.fechaLlegada) {
+      errores.fechaSalida = 'La fecha de salida debe ser posterior a la de llegada.';
     }
 
     return errores;
   }
 
-  private validarHuespedes(huespedes: number | null, capacidad: number): string[] {
+  private validarHuespedes(huespedes: number | null, capacidad: number): ErroresEstancia {
     if (huespedes === null || !Number.isInteger(huespedes) || huespedes <= 0) {
-      return ['El número de huéspedes debe ser mayor que cero.'];
+      return { huespedes: 'El número de huéspedes debe ser mayor que cero.' };
     }
     if (huespedes > capacidad) {
-      return [`Máximo ${capacidad} huéspedes para este alojamiento.`];
+      const unidad = capacidad === 1 ? 'huésped' : 'huéspedes';
+      return { huespedes: `Máximo ${capacidad} ${unidad} para este alojamiento.` };
     }
-    return [];
+    return {};
   }
 
   private fechaDeHoy(): string {
