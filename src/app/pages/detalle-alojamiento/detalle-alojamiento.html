@@ -18,7 +18,11 @@
           <div class="row g-3">
             @for (imagen of a.imagenes; track imagen) {
               <div class="col-12 col-md-6">
-                <img [src]="imagen" [alt]="a.nombre" class="img-fluid rounded w-100" />
+                <img
+                  [src]="imagen"
+                  [alt]="a.nombre"
+                  class="img-fluid rounded w-100"
+                />
               </div>
             }
           </div>
@@ -26,14 +30,55 @@
 
         <p class="my-4">{{ a.descripcion }}</p>
 
-        <!-- Aca van los atributos cuartos, camas, banos, precio, servicios y reglas -->
         <app-detalle-caracteristicas [alojamiento]="a" />
-        <app-detalle-servicios-reglas class="d-block mt-4" [alojamiento]="a" />
-        <!-- Calificacion y reviews -->
+        <app-detalle-servicios-reglas
+          class="d-block mt-4"
+          [alojamiento]="a"
+        />
       </div>
 
       <aside class="col-12 col-lg-4" aria-label="Cotizacion">
-        <!-- Cotizacion -->
+        <app-formulario-cotizacion
+          [capacidad]="a.capacidad"
+          [hoy]="hoy()"
+          [errores]="errores()"
+          (cotizar)="cotizar($event)"
+        />
+
+        @if (cotizacion(); as resultado) {
+          <div class="card mt-4">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Resumen de cotización</h2>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span>Noches</span>
+                <span>{{ resultado.noches }}</span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal</span>
+                <span>${{ resultado.subtotal | number }}</span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span>Tarifa de limpieza</span>
+                <span>${{ resultado.tarifaLimpieza | number }}</span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-3">
+                <span>Tarifa de servicio (10%)</span>
+                <span>${{ resultado.tarifaServicio | number }}</span>
+              </div>
+
+              <hr />
+
+              <div class="d-flex justify-content-between fw-bold fs-5">
+                <span>Total</span>
+                <span>${{ resultado.total | number }}</span>
+              </div>
+            </div>
+          </div>
+        }
       </aside>
     </div>
   } @else if (alojamientoService.estaCargando()) {
@@ -47,14 +92,20 @@
       {{ alojamientoService.mensajeError() }}
     </div>
 
-    <a class="btn btn-kuppo" routerLink="/alojamientos"> Volver a los alojamientos </a>
+    <a class="btn btn-kuppo" routerLink="/alojamientos">
+      Volver a los alojamientos
+    </a>
   } @else {
     <div class="text-center py-5">
       <h1 class="fs-3">Alojamiento no disponible</h1>
 
-      <p class="text-secondary">Este alojamiento no existe o ya no está disponible.</p>
+      <p class="text-secondary">
+        Este alojamiento no existe o ya no está disponible.
+      </p>
 
-      <a class="btn btn-kuppo" routerLink="/alojamientos"> Volver a los alojamientos </a>
+      <a class="btn btn-kuppo" routerLink="/alojamientos">
+        Volver a los alojamientos
+      </a>
     </div>
   }
 </section>

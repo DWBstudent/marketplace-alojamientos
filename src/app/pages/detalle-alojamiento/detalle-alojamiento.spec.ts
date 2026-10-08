@@ -1,5 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { registerLocaleData } from '@angular/common';
+import localeEsCo from '@angular/common/locales/es-CO';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -7,10 +9,8 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { Alojamiento } from '../../models/alojamiento';
 import { DetalleAlojamiento } from './detalle-alojamiento';
 
-import { registerLocaleData } from '@angular/common';
-import localeEsCo from '@angular/common/locales/es-CO';
-
 registerLocaleData(localeEsCo);
+
 function crearAlojamiento(id: number, activo = true): Alojamiento {
   return {
     id,
@@ -75,6 +75,21 @@ describe('DetalleAlojamiento', () => {
 
   function texto(): string {
     return harness.routeNativeElement?.textContent ?? '';
+  }
+
+  function escribirCampo(id: string, valor: string): void {
+    const campo = harness.routeNativeElement?.querySelector(`#${id}`) as HTMLInputElement;
+
+    campo.value = valor;
+    campo.dispatchEvent(new Event('input'));
+    harness.detectChanges();
+  }
+
+  function enviarCotizacion(): void {
+    const formulario = harness.routeNativeElement?.querySelector('form') as HTMLFormElement;
+
+    formulario.dispatchEvent(new Event('submit'));
+    harness.detectChanges();
   }
 
   it('should show a loading indicator while the lodging loads', async () => {
@@ -153,5 +168,86 @@ describe('DetalleAlojamiento', () => {
     cargar([crearAlojamiento(1)]);
 
     expect(harness.routeNativeElement?.querySelector('aside')).not.toBeNull();
+  });
+
+  it('should show the quotation form for the lodging capacity', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    expect(texto()).toContain('Cotiza tu estancia');
+    expect(texto()).toContain('Máximo 4 huéspedes');
+  });
+
+  it('should show the complete quotation after valid data is submitted', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    escribirCampo('fecha-llegada', '2099-11-10');
+    escribirCampo('fecha-salida', '2099-11-12');
+    escribirCampo('huespedes', '2');
+
+    enviarCotizacion();
+
+    expect(texto()).toContain('Resumen de cotización');
+    expect(texto()).toContain('Noches');
+    expect(texto()).toContain('2');
+    expect(texto()).toContain('Subtotal');
+    expect(texto()).toContain('200,000');
+    expect(texto()).toContain('Tarifa de limpieza');
+    expect(texto()).toContain('20,000');
+    expect(texto()).toContain('Tarifa de servicio (10%)');
+    expect(texto()).toContain('20,000');
+    expect(texto()).toContain('Total');
+    expect(texto()).toContain('240,000');
+  });
+
+  it('should show validation errors and not show a quotation when the dates are invalid', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    escribirCampo('fecha-llegada', '2099-11-10');
+    escribirCampo('fecha-salida', '2099-11-10');
+    escribirCampo('huespedes', '2');
+
+    enviarCotizacion();
+
+    expect(texto()).toContain('La fecha de salida debe ser posterior a la de llegada.');
+    expect(texto()).not.toContain('Resumen de cotización');
+  });
+
+  it('should show a validation error when the number of guests exceeds capacity', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    escribirCampo('fecha-llegada', '2099-11-10');
+    escribirCampo('fecha-salida', '2099-11-12');
+    escribirCampo('huespedes', '5');
+
+    enviarCotizacion();
+
+    expect(texto()).toContain('Máximo 4 huéspedes para este alojamiento.');
+    expect(texto()).not.toContain('Resumen de cotización');
+  });
+
+  it('should clear a previous quotation when a later validation fails', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    escribirCampo('fecha-llegada', '2099-11-10');
+    escribirCampo('fecha-salida', '2099-11-12');
+    escribirCampo('huespedes', '2');
+
+    enviarCotizacion();
+
+    expect(texto()).toContain('Resumen de cotización');
+    expect(texto()).toContain('240,000');
+
+    escribirCampo('fecha-salida', '2099-11-10');
+
+    enviarCotizacion();
+
+    expect(texto()).toContain('La fecha de salida debe ser posterior a la de llegada.');
+    expect(texto()).not.toContain('Resumen de cotización');
+    expect(texto()).not.toContain('240,000');
   });
 });
