@@ -30,6 +30,18 @@ export class CotizacionService {
     };
   }
 
+  // Same quote as calcular, but null when the stay has no nights or the price per night
+  // is not positive. Useful when the dates have not been validated yet.
+  cotizar(alojamiento: Alojamiento, estancia: DatosEstancia): Cotizacion | null {
+    const noches = this.calcularNoches(estancia.fechaLlegada, estancia.fechaSalida);
+
+    if (noches < 1 || alojamiento.precioNoche <= 0) {
+      return null;
+    }
+
+    return this.calcular(alojamiento, estancia);
+  }
+
   // Days between arrival and departure. The "YYYY-MM-DD" dates are read as UTC
   // midnights, so the local time zone and daylight saving time never change the count.
   // Gives 0 when a date is empty, malformed or not a real date.

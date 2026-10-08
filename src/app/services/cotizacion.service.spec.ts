@@ -143,4 +143,31 @@ describe('CotizacionService', () => {
       expect(cotizacion.total).toBe(366);
     });
   });
+
+  describe('cotizar', () => {
+    it('should give the same quote as calcular for a stay with nights', () => {
+      const estancia = crearEstancia('2026-11-10', '2026-11-12');
+
+      expect(service.cotizar(crearAlojamiento(), estancia)).toEqual(
+        service.calcular(crearAlojamiento(), estancia),
+      );
+    });
+
+    it('should not quote a stay without nights', () => {
+      expect(
+        service.cotizar(crearAlojamiento(), crearEstancia('2026-11-12', '2026-11-12')),
+      ).toBeNull();
+      expect(
+        service.cotizar(crearAlojamiento(), crearEstancia('2026-11-12', '2026-11-10')),
+      ).toBeNull();
+      expect(service.cotizar(crearAlojamiento(), crearEstancia('', ''))).toBeNull();
+    });
+
+    it('should not quote a lodging whose price per night is not positive', () => {
+      const alojamiento = crearAlojamiento({ precioNoche: 0 });
+
+      expect(service.cotizar(alojamiento, crearEstancia('2026-11-10', '2026-11-12'))).toBeNull();
+    });
+  });
+
 });
