@@ -10,8 +10,9 @@
           <h1 class="fs-2">{{ a.nombre }}</h1>
           <p class="text-secondary mb-0">
             <i class="fa-solid fa-location-dot"></i>
-            {{ a.ubicacion }} · {{ a.tipo }}
+            {{ a.ciudad }} · {{ a.tipo }}
           </p>
+          <p class="small text-secondary mb-0">{{ a.ubicacion }}</p>
         </header>
 
         <div class="mb-4">
@@ -43,6 +44,7 @@
           [hoy]="hoy()"
           [errores]="errores()"
           (cotizar)="cotizar($event)"
+          (estanciaModificada)="descartarCotizacion()"
         />
 
         @if (cotizacion(); as resultado) {
@@ -78,6 +80,16 @@
               </div>
             </div>
           </div>
+        }
+
+        <app-formulario-huesped
+          class="d-block mt-4"
+          [habilitado]="cotizacion() !== null"
+          (reservar)="reservar($event)"
+        />
+
+        @if (errorReserva(); as mensaje) {
+          <div class="alert alert-danger mt-3" role="alert">{{ mensaje }}</div>
         }
       </aside>
     </div>

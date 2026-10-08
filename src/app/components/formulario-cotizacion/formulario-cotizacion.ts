@@ -12,15 +12,19 @@ export class FormularioCotizacion {
   readonly hoy = input.required<string>();
   readonly errores = input<ErroresEstancia>({});
   readonly cotizar = output<DatosEstancia>();
+  // Emitted every time the user edits a field, so the page can drop an outdated quotation.
+  readonly estanciaModificada = output<void>();
 
   protected readonly estancia = signal<DatosEstancia>(ESTANCIA_VACIA);
 
   protected cambiarLlegada(valor: string): void {
     this.estancia.update((actual) => ({ ...actual, fechaLlegada: valor }));
+    this.estanciaModificada.emit();
   }
 
   protected cambiarSalida(valor: string): void {
     this.estancia.update((actual) => ({ ...actual, fechaSalida: valor }));
+    this.estanciaModificada.emit();
   }
 
   protected escribirHuespedes(valor: string): void {
@@ -28,12 +32,14 @@ export class FormularioCotizacion {
       ...actual,
       huespedes: valor === '' ? null : Number(valor),
     }));
+    this.estanciaModificada.emit();
   }
 
   protected cambiarHuespedes(paso: number): void {
     const actual = this.estancia().huespedes ?? 0;
     const nuevo = Math.min(Math.max(actual + paso, 1), this.capacidad());
     this.estancia.update((estancia) => ({ ...estancia, huespedes: nuevo }));
+    this.estanciaModificada.emit();
   }
 
   protected enviar(evento: Event): void {

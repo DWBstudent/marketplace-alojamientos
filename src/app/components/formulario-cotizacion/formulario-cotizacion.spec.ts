@@ -45,6 +45,17 @@ describe('FormularioCotizacion', () => {
     expect((element.querySelector('#fecha-llegada') as HTMLInputElement).min).toBe('2026-11-01');
   });
 
+  it('should tell the page when any field of the stay is edited', () => {
+    let avisos = 0;
+    fixture.componentInstance.estanciaModificada.subscribe(() => avisos++);
+
+    escribir('fecha-llegada', '2026-11-10');
+    escribir('fecha-salida', '2026-11-12');
+    escribir('huespedes', '2');
+    pulsar('Más huéspedes');
+
+    expect(avisos).toBe(4);
+  });
   it('should emit the data of the stay when the form is submitted', () => {
     const emitidos: DatosEstancia[] = [];
     fixture.componentInstance.cotizar.subscribe((datos) => emitidos.push(datos));
