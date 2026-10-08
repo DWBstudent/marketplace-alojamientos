@@ -1,6 +1,36 @@
 import { TestBed } from '@angular/core/testing';
 
+import { Alojamiento } from '../models/alojamiento';
+import { DatosEstancia } from '../models/estancia';
 import { CotizacionService } from './cotizacion.service';
+
+function crearAlojamiento(cambios: Partial<Alojamiento> = {}): Alojamiento {
+  return {
+    id: 1,
+    nombre: 'Alojamiento 1',
+    descripcion: 'Descripcion de prueba',
+    ciudad: 'Bogotá',
+    ubicacion: 'Chapinero, Bogotá',
+    tipo: 'Apartamento',
+    capacidad: 4,
+    habitaciones: 2,
+    camas: 2,
+    banos: 1,
+    precioNoche: 180000,
+    tarifaLimpieza: 45000,
+    calificacion: 4.5,
+    activo: true,
+    imagenPrincipal: 'assets/images/prueba.jpg',
+    imagenes: ['assets/images/prueba.jpg'],
+    servicios: ['Wi-Fi'],
+    reglas: ['No fumar'],
+    ...cambios,
+  };
+}
+
+function crearEstancia(fechaLlegada: string, fechaSalida: string): DatosEstancia {
+  return { fechaLlegada, fechaSalida, huespedes: 2 };
+}
 
 describe('CotizacionService', () => {
   let service: CotizacionService;
@@ -51,6 +81,66 @@ describe('CotizacionService', () => {
       expect(service.calcularNoches('', '2026-11-10')).toBe(0);
       expect(service.calcularNoches('2026-11-10', '10/11/2026')).toBe(0);
       expect(service.calcularNoches('2026-02-31', '2026-03-05')).toBe(0);
+    });
+  });
+
+  describe('calcular', () => {
+    it('should calculate nights, subtotal, cleaning fee, 10 % service fee and total', () => {
+      const cotizacion = service.calcular(
+        crearAlojamiento(),
+        crearEstancia('2026-11-10', '2026-11-13'),
+      );
+
+      expect(cotizacion).toEqual({
+        noches: 3,
+        subtotal: 540000,
+        tarifaLimpieza: 45000,
+        tarifaServicio: 54000,
+        total: 639000,
+      });
+    });
+
+    it('should quote a stay that changes month', () => {
+      const cotizacion = service.calcular(
+        crearAlojamiento(),
+        crearEstancia('2026-11-28', '2026-12-02'),
+      );
+
+      expect(cotizacion.noches).toBe(4);
+      expect(cotizacion.subtotal).toBe(720000);
+      expect(cotizacion.tarifaServicio).toBe(72000);
+      expect(cotizacion.total).toBe(720000 + 45000 + 72000);
+    });
+
+    it('should quote a stay that changes year', () => {
+      const cotizacion = service.calcular(
+        crearAlojamiento({ precioNoche: 350000, tarifaLimpieza: 60000 }),
+        crearEstancia('2026-12-30', '2027-01-02'),
+      );
+
+      expect(cotizacion.noches).toBe(3);
+      expect(cotizacion.subtotal).toBe(1050000);
+      expect(cotizacion.tarifaServicio).toBe(105000);
+      expect(cotizacion.total).toBe(1050000 + 60000 + 105000);
+    });
+
+    it('should charge the service fee over the subtotal only, not over the cleaning fee', () => {
+      const cotizacion = service.calcular(
+        crearAlojamiento({ tarifaLimpieza: 1000000 }),
+        crearEstancia('2026-11-10', '2026-11-11'),
+      );
+
+      expect(cotizacion.tarifaServicio).toBe(18000);
+    });
+
+    it('should round the service fee to whole pesos', () => {
+      const cotizacion = service.calcular(
+        crearAlojamiento({ precioNoche: 333, tarifaLimpieza: 0 }),
+        crearEstancia('2026-11-10', '2026-11-11'),
+      );
+
+      expect(cotizacion.tarifaServicio).toBe(33);
+      expect(cotizacion.total).toBe(366);
     });
   });
 });
