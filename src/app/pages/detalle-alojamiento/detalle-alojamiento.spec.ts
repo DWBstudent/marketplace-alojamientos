@@ -10,6 +10,8 @@ import { Alojamiento } from '../../models/alojamiento';
 import { DetalleAlojamiento } from './detalle-alojamiento';
 import { ReservaService } from '../../services/reserva.service';
 
+import { CreacionReservaService } from '../../services/creacion-reserva.service';
+
 registerLocaleData(localeEsCo);
 
 function crearAlojamiento(id: number, activo = true): Alojamiento {
@@ -369,6 +371,45 @@ describe('DetalleAlojamiento', () => {
     reservarComo('Laura Gómez', 'laura@example.com');
 
     expect(texto()).toContain('No se pudo guardar la reserva en este dispositivo.');
+    expect(navegar).not.toHaveBeenCalled();
+  });
+
+  it('should reserve through CreacionReservaService with the quoted stay', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+    vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    const reservar = vi.spyOn(TestBed.inject(CreacionReservaService), 'reservar');
+
+    cotizarEstanciaValida();
+    reservarComo('Laura Gómez', 'laura@example.com');
+
+    expect(reservar).toHaveBeenCalledTimes(1);
+
+    const [alojamiento, estancia, cotizacion, huesped] = reservar.mock.calls[0];
+
+    expect(alojamiento.id).toBe(1);
+    expect(estancia).toEqual({
+      fechaLlegada: '2099-11-10',
+      fechaSalida: '2099-11-12',
+      huespedes: 2,
+    });
+    expect(cotizacion?.total).toBe(240000);
+    expect(huesped).toEqual({ nombreHuesped: 'Laura Gómez', correoHuesped: 'laura@example.com' });
+  });
+
+  it('should show the reason and stay on the page when the reservation is rejected', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+    const navegar = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    vi.spyOn(TestBed.inject(CreacionReservaService), 'reservar').mockReturnValue({
+      reserva: null,
+      error: 'Este alojamiento ya no está disponible.',
+    });
+
+    cotizarEstanciaValida();
+    reservarComo('Laura Gómez', 'laura@example.com');
+
+    expect(texto()).toContain('Este alojamiento ya no está disponible.');
     expect(navegar).not.toHaveBeenCalled();
   });
 });
