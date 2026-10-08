@@ -11,7 +11,7 @@ import { AlojamientoService } from '../../services/alojamiento.service';
   selector: 'app-detalle-alojamiento',
   imports: [RouterLink, DetalleCaracteristicas, DetalleServiciosReglas],
   templateUrl: './detalle-alojamiento.html',
-  styleUrl: './detalle-alojamiento.css',x
+  styleUrl: './detalle-alojamiento.css',
 })
 export class DetalleAlojamiento {
   private readonly route = inject(ActivatedRoute);
