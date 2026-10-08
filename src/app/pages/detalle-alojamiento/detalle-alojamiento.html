@@ -9,37 +9,52 @@
         <header class="mb-4">
           <h1 class="fs-2">{{ a.nombre }}</h1>
           <p class="text-secondary mb-0">
-            <i class="fa-solid fa-location-dot"></i> {{ a.ubicacion }} · {{ a.tipo }}
+            <i class="fa-solid fa-location-dot"></i>
+            {{ a.ubicacion }} · {{ a.tipo }}
           </p>
         </header>
 
-    <!-- Imagen de la galeria -->
+        <div class="mb-4">
+          <div class="row g-3">
+            @for (imagen of a.imagenes; track imagen) {
+              <div class="col-12 col-md-6">
+                <img [src]="imagen" [alt]="a.nombre" class="img-fluid rounded w-100" />
+              </div>
+            }
+          </div>
+        </div>
 
-    <p class="my-4">{{ a.descripcion }}</p>
+        <p class="my-4">{{ a.descripcion }}</p>
 
-    <!-- Aca van los atributos cuartos, camas , banos , precio servicios y reglas -->
-
-        <!-- Calificaion y review -->
+        <!-- Aca van los atributos cuartos, camas, banos, precio, servicios y reglas -->
+        <app-detalle-caracteristicas [alojamiento]="a" />
+        <app-detalle-servicios-reglas class="d-block mt-4" [alojamiento]="a" />
+        <!-- Calificacion y reviews -->
       </div>
 
-      <aside class="col-12 col-lg-4" aria-label="Cotización">
+      <aside class="col-12 col-lg-4" aria-label="Cotizacion">
         <!-- Cotizacion -->
       </aside>
     </div>
   } @else if (alojamientoService.estaCargando()) {
     <div class="text-center py-5">
       <div class="spinner-border" role="status">
-        <span class="visually-hidden">Cargando alojamiento…</span>
+        <span class="visually-hidden">Cargando alojamiento...</span>
       </div>
     </div>
   } @else if (alojamientoService.mensajeError()) {
-    <div class="alert alert-danger" role="alert">{{ alojamientoService.mensajeError() }}</div>
-    <a class="btn btn-kuppo" routerLink="/alojamientos">Volver a los alojamientos</a>
+    <div class="alert alert-danger" role="alert">
+      {{ alojamientoService.mensajeError() }}
+    </div>
+
+    <a class="btn btn-kuppo" routerLink="/alojamientos"> Volver a los alojamientos </a>
   } @else {
     <div class="text-center py-5">
       <h1 class="fs-3">Alojamiento no disponible</h1>
+
       <p class="text-secondary">Este alojamiento no existe o ya no está disponible.</p>
-      <a class="btn btn-kuppo" routerLink="/alojamientos">Volver a los alojamientos</a>
+
+      <a class="btn btn-kuppo" routerLink="/alojamientos"> Volver a los alojamientos </a>
     </div>
   }
 </section>

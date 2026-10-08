@@ -1,7 +1,11 @@
+import { registerLocaleData } from '@angular/common';
+import localeEsCo from '@angular/common/locales/es-CO';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Alojamiento } from '../../models/alojamiento';
 import { DetalleCaracteristicas } from './detalle-caracteristicas';
+
+registerLocaleData(localeEsCo);
 
 function crearAlojamiento(cambios: Partial<Alojamiento> = {}): Alojamiento {
   return {

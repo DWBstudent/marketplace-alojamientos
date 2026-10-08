@@ -7,6 +7,10 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { Alojamiento } from '../../models/alojamiento';
 import { DetalleAlojamiento } from './detalle-alojamiento';
 
+import { registerLocaleData } from '@angular/common';
+import localeEsCo from '@angular/common/locales/es-CO';
+
+registerLocaleData(localeEsCo);
 function crearAlojamiento(id: number, activo = true): Alojamiento {
   return {
     id,
