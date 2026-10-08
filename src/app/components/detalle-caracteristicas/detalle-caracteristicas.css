@@ -1,0 +1,18 @@
+.detalle-caracteristicas {
+  background-color: var(--kuppo-warm-gray);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+}
+
+.detalle-caracteristicas i {
+  color: var(--kuppo-wine);
+  margin-right: 0.35rem;
+}
+
+.detalle-caracteristicas-valor {
+  font-weight: 700;
+}
+
+.detalle-caracteristicas-precio strong {
+  color: var(--kuppo-wine);
+}

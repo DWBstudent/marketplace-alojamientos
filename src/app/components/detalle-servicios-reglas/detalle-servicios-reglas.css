@@ -1,0 +1,14 @@
+.detalle-servicio {
+  background-color: var(--kuppo-yellow-light);
+  color: var(--kuppo-wine);
+  font-weight: 600;
+}
+
+.detalle-reglas li {
+  margin-bottom: 0.35rem;
+}
+
+.detalle-reglas i {
+  color: var(--kuppo-wine);
+  margin-right: 0.35rem;
+}
