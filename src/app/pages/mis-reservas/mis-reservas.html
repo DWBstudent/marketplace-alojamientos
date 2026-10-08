@@ -1,1 +1,20 @@
-<p>mis-reservas works!</p>
+<section class="container py-4">
+  <header class="mb-4">
+    <h1 class="fs-2">Mis reservas</h1>
+    <p class="text-secondary mb-0">
+      Consulta las reservas realizadas desde la aplicación.
+    </p>
+  </header>
+
+  @if (reservaService.reservas().length === 0) {
+    <div class="text-center py-5">
+      <i class="fa-solid fa-calendar-xmark fa-2x mb-3"></i>
+
+      <h2 class="fs-4">No tienes reservas todavía</h2>
+
+      <p class="text-secondary mb-0">
+        Cuando realices una reserva, aparecerá aquí.
+      </p>
+    </div>
+  }
+</section>
