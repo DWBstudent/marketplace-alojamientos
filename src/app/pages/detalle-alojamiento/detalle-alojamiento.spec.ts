@@ -91,6 +91,13 @@ describe('DetalleAlojamiento', () => {
     formulario.dispatchEvent(new Event('submit'));
     harness.detectChanges();
   }
+  it('should show the city and the location of the lodging', async () => {
+    await abrir('1');
+    cargar([{ ...crearAlojamiento(1), ciudad: 'Cartagena', ubicacion: 'Bocagrande' }]);
+
+    expect(texto()).toContain('Cartagena');
+    expect(texto()).toContain('Bocagrande');
+  });
 
   it('should show a loading indicator while the lodging loads', async () => {
     await abrir('1');
