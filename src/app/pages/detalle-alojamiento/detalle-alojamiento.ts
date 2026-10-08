@@ -15,6 +15,7 @@ import { AlojamientoService } from '../../services/alojamiento.service';
 import { CotizacionService } from '../../services/cotizacion.service';
 import { ReservaService } from '../../services/reserva.service';
 import { ValidacionCotizacionService } from '../../services/validacion-cotizacion.service';
+import { CreacionReservaService } from '../../services/creacion-reserva.service';
 
 @Component({
   selector: 'app-detalle-alojamiento',
@@ -36,6 +37,7 @@ export class DetalleAlojamiento {
   private readonly cotizacionService = inject(CotizacionService);
   private readonly validacionService = inject(ValidacionCotizacionService);
   private readonly reservaService = inject(ReservaService);
+  private readonly creacionReservaService = inject(CreacionReservaService);
 
   protected readonly alojamiento = toSignal(
     this.route.paramMap.pipe(
@@ -83,8 +85,6 @@ export class DetalleAlojamiento {
     this.errorReserva.set(null);
   }
 
-  // A quotation is only valid for the stay that produced it: when the user edits the form
-  // it is dropped, and the reserve button is disabled until a new one is generated.
   protected descartarCotizacion(): void {
     this.cotizacion.set(null);
     this.estanciaCotizada.set(null);
@@ -94,26 +94,23 @@ export class DetalleAlojamiento {
   protected reservar(huesped: DatosHuesped): void {
     const alojamiento = this.alojamiento();
     const estancia = this.estanciaCotizada();
-    const cotizacion = this.cotizacion();
 
-    if (!alojamiento || !estancia || !cotizacion || estancia.huespedes === null) {
+    if (!alojamiento || !estancia) {
       return;
     }
 
-    this.reservaService.crearReserva({
-      alojamientoId: alojamiento.id,
-      alojamientoNombre: alojamiento.nombre,
-      ciudad: alojamiento.ciudad,
-      fechaLlegada: estancia.fechaLlegada,
-      fechaSalida: estancia.fechaSalida,
-      huespedes: estancia.huespedes,
-      noches: cotizacion.noches,
-      total: cotizacion.total,
-      nombreHuesped: huesped.nombreHuesped,
-      correoHuesped: huesped.correoHuesped,
-    });
+    const resultado = this.creacionReservaService.reservar(
+      alojamiento,
+      estancia,
+      this.cotizacion(),
+      huesped,
+    );
 
-    // The service sets the error when the reservation could not be saved.
+    if (resultado.error !== null) {
+      this.errorReserva.set(resultado.error);
+      return;
+    }
+
     this.errorReserva.set(this.reservaService.error());
 
     if (this.errorReserva() === null) {
