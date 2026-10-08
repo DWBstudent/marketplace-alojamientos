@@ -170,4 +170,84 @@ describe('CotizacionService', () => {
     });
   });
 
+  describe('with the prices of the project lodgings', () => {
+    const casos = [
+      {
+        id: 1,
+        precioNoche: 180000,
+        tarifaLimpieza: 45000,
+        llegada: '2026-11-10',
+        salida: '2026-11-13',
+        noches: 3,
+        subtotal: 540000,
+        servicio: 54000,
+        total: 639000,
+      },
+      {
+        id: 2,
+        precioNoche: 420000,
+        tarifaLimpieza: 70000,
+        llegada: '2026-11-28',
+        salida: '2026-12-02',
+        noches: 4,
+        subtotal: 1680000,
+        servicio: 168000,
+        total: 1918000,
+      },
+      {
+        id: 3,
+        precioNoche: 350000,
+        tarifaLimpieza: 60000,
+        llegada: '2026-12-30',
+        salida: '2027-01-02',
+        noches: 3,
+        subtotal: 1050000,
+        servicio: 105000,
+        total: 1215000,
+      },
+      {
+        id: 4,
+        precioNoche: 520000,
+        tarifaLimpieza: 90000,
+        llegada: '2027-02-26',
+        salida: '2027-03-02',
+        noches: 4,
+        subtotal: 2080000,
+        servicio: 208000,
+        total: 2378000,
+      },
+      {
+        id: 5,
+        precioNoche: 230000,
+        tarifaLimpieza: 50000,
+        llegada: '2028-02-27',
+        salida: '2028-03-01',
+        noches: 3,
+        subtotal: 690000,
+        servicio: 69000,
+        total: 809000,
+      },
+    ];
+
+    for (const caso of casos) {
+      it(`should quote the lodging ${caso.id} from ${caso.llegada} to ${caso.salida}`, () => {
+        const alojamiento = crearAlojamiento({
+          id: caso.id,
+          precioNoche: caso.precioNoche,
+          tarifaLimpieza: caso.tarifaLimpieza,
+        });
+
+        const cotizacion = service.calcular(alojamiento, crearEstancia(caso.llegada, caso.salida));
+
+        expect(cotizacion).toEqual({
+          noches: caso.noches,
+          subtotal: caso.subtotal,
+          tarifaLimpieza: caso.tarifaLimpieza,
+          tarifaServicio: caso.servicio,
+          total: caso.total,
+        });
+      });
+    }
+  });
+
 });
