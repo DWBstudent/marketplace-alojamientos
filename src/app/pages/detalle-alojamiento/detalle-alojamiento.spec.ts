@@ -8,6 +8,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Alojamiento } from '../../models/alojamiento';
 import { DetalleAlojamiento } from './detalle-alojamiento';
+import { ReservaService } from '../../services/reserva.service';
 
 registerLocaleData(localeEsCo);
 
@@ -44,6 +45,7 @@ describe('DetalleAlojamiento', () => {
   let router: Router;
 
   beforeEach(async () => {
+    localStorage.clear();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
@@ -60,6 +62,11 @@ describe('DetalleAlojamiento', () => {
     http = TestBed.inject(HttpTestingController);
     harness = await RouterTestingHarness.create();
     router = TestBed.inject(Router);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
   });
 
   async function abrir(id: string): Promise<void> {
@@ -91,6 +98,32 @@ describe('DetalleAlojamiento', () => {
     formulario.dispatchEvent(new Event('submit'));
     harness.detectChanges();
   }
+
+  function cotizarEstanciaValida(): void {
+    escribirCampo('fecha-llegada', '2099-11-10');
+    escribirCampo('fecha-salida', '2099-11-12');
+    escribirCampo('huespedes', '2');
+    enviarCotizacion();
+  }
+
+  function botonReservar(): HTMLButtonElement {
+    return harness.routeNativeElement?.querySelector(
+      'app-formulario-huesped button[type="submit"]',
+    ) as HTMLButtonElement;
+  }
+
+  function reservarComo(nombre: string, correo: string): void {
+    escribirCampo('huesped-nombre', nombre);
+    escribirCampo('huesped-correo', correo);
+
+    const formulario = harness.routeNativeElement?.querySelector(
+      'app-formulario-huesped form',
+    ) as HTMLFormElement;
+
+    formulario.dispatchEvent(new Event('submit'));
+    harness.detectChanges();
+  }
+
   it('should show the city and the location of the lodging', async () => {
     await abrir('1');
     cargar([{ ...crearAlojamiento(1), ciudad: 'Cartagena', ubicacion: 'Bocagrande' }]);
@@ -256,5 +289,86 @@ describe('DetalleAlojamiento', () => {
     expect(texto()).toContain('La fecha de salida debe ser posterior a la de llegada.');
     expect(texto()).not.toContain('Resumen de cotización');
     expect(texto()).not.toContain('240,000');
+  });
+
+  it('should keep the reserve button disabled until there is a valid quotation', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    expect(texto()).toContain('Datos del huésped');
+    expect(botonReservar().disabled).toBe(true);
+
+    cotizarEstanciaValida();
+
+    expect(botonReservar().disabled).toBe(false);
+  });
+
+  it('should drop the quotation and disable the reserve button when the stay is edited', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+
+    cotizarEstanciaValida();
+
+    expect(texto()).toContain('Resumen de cotización');
+
+    escribirCampo('fecha-salida', '2099-11-13');
+
+    expect(texto()).not.toContain('Resumen de cotización');
+    expect(botonReservar().disabled).toBe(true);
+  });
+
+  it('should create a confirmed reservation from the quoted stay and open "Mis reservas"', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+    const navegar = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    cotizarEstanciaValida();
+    reservarComo('Laura Gómez', 'laura@example.com');
+
+    const reservas = TestBed.inject(ReservaService).reservas();
+
+    expect(reservas).toHaveLength(1);
+    expect(reservas[0]).toMatchObject({
+      alojamientoId: 1,
+      alojamientoNombre: 'Alojamiento 1',
+      ciudad: 'Bogotá',
+      fechaLlegada: '2099-11-10',
+      fechaSalida: '2099-11-12',
+      huespedes: 2,
+      noches: 2,
+      total: 240000,
+      estado: 'CONFIRMADA',
+      nombreHuesped: 'Laura Gómez',
+      correoHuesped: 'laura@example.com',
+    });
+    expect(navegar).toHaveBeenCalledWith('/mis-reservas');
+  });
+
+  it('should not create a reservation when the guest data is invalid', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+    const navegar = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    cotizarEstanciaValida();
+    reservarComo('', 'no-es-un-correo');
+
+    expect(TestBed.inject(ReservaService).reservas()).toHaveLength(0);
+    expect(navegar).not.toHaveBeenCalled();
+    expect(texto()).toContain('El nombre del huésped es obligatorio.');
+  });
+
+  it('should show an error and stay on the page when the reservation cannot be saved', async () => {
+    await abrir('1');
+    cargar([crearAlojamiento(1)]);
+    const navegar = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('storage full');
+    });
+
+    cotizarEstanciaValida();
+    reservarComo('Laura Gómez', 'laura@example.com');
+
+    expect(texto()).toContain('No se pudo guardar la reserva en este dispositivo.');
+    expect(navegar).not.toHaveBeenCalled();
   });
 });
