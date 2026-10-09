@@ -82,4 +82,40 @@ describe('MisReservas', () => {
 
     expect(nuevoServicio.reservas()).toEqual([reserva]);
   });
+  describe('MisReservas with saved reservations', () => {
+    const reserva = {
+      id: '1',
+      alojamientoId: 1,
+      alojamientoNombre: 'Casa Prueba',
+      ciudad: 'Yopal',
+      fechaLlegada: '2099-01-10',
+      fechaSalida: '2099-01-12',
+      huespedes: 2,
+      noches: 2,
+      total: 500000,
+      estado: 'CONFIRMADA',
+      nombreHuesped: 'Ana',
+      correoHuesped: 'ana@correo.com',
+    };
+
+    beforeEach(() => {
+      localStorage.setItem('marketplace-reservas', JSON.stringify([reserva]));
+    });
+
+    afterEach(() => localStorage.clear());
+
+    it('should list the saved reservations', async () => {
+      await TestBed.configureTestingModule({ imports: [MisReservas] }).compileComponents();
+      const fixture = TestBed.createComponent(MisReservas);
+      await fixture.whenStable();
+
+      const texto = (fixture.nativeElement as HTMLElement).textContent;
+
+      expect(texto).toContain('Casa Prueba');
+      expect(texto).toContain('Yopal');
+      expect(texto).toContain('2 noches');
+      expect(texto).toContain('CONFIRMADA');
+      expect(texto).not.toContain('No tienes reservas todavía');
+    });
+  });
 });

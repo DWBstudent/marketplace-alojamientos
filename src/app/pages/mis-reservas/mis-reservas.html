@@ -16,5 +16,28 @@
         Cuando realices una reserva, aparecerá aquí.
       </p>
     </div>
+  } @else {
+    <div class="row g-4">
+      @for (reserva of reservaService.reservas(); track reserva.id) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <article class="card h-100">
+            <div class="card-body">
+              <h2 class="fs-5 card-title">{{ reserva.alojamientoNombre }}</h2>
+              <p class="text-secondary">{{ reserva.ciudad }}</p>
+              <p class="mb-1">
+                {{ reserva.fechaLlegada | date: 'mediumDate' }} →
+                {{ reserva.fechaSalida | date: 'mediumDate' }}
+                ({{ reserva.noches }} noches)
+              </p>
+              <p class="mb-1">{{ reserva.huespedes }} huésped(es)</p>
+              <p class="fw-bold mb-2">
+                Total: {{ reserva.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </p>
+              <span class="badge text-bg-success">{{ reserva.estado }}</span>
+            </div>
+          </article>
+        </div>
+      }
+    </div>
   }
 </section>
