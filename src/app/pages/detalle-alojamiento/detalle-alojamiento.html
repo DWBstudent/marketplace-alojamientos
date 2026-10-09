@@ -36,6 +36,11 @@
           class="d-block mt-4"
           [alojamiento]="a"
         />
+        <app-resenas-alojamiento
+          class="d-block mt-4"
+          [calificacion]="a.calificacion"
+          [resenas]="resenas()"
+        />
       </div>
 
       <aside class="col-12 col-lg-4" aria-label="Cotizacion">

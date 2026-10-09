@@ -1,42 +1,22 @@
-<section class="container py-4">
-  <header class="mb-4">
-    <h1 class="fs-2">Mis reservas</h1>
-    <p class="text-secondary mb-0">
-      Consulta las reservas realizadas desde la aplicación.
-    </p>
-  </header>
+<section class="mis-reservas">
+  <h1>Mis reservas</h1>
 
-  @if (reservaService.reservas().length === 0) {
-    <div class="text-center py-5">
-      <i class="fa-solid fa-calendar-xmark fa-2x mb-3"></i>
-
-      <h2 class="fs-4">No tienes reservas todavía</h2>
-
-      <p class="text-secondary mb-0">
-        Cuando realices una reserva, aparecerá aquí.
-      </p>
+  @if (reservas().length === 0) {
+    <div class="sin-datos">
+      <p>Aún no tienes reservas.</p>
+      <a routerLink="/alojamientos" class="btn btn-primary">Explorar alojamientos</a>
     </div>
   } @else {
-    <div class="row g-4">
-      @for (reserva of reservaService.reservas(); track reserva.id) {
-        <div class="col-12 col-md-6 col-lg-4">
-          <article class="card h-100">
-            <div class="card-body">
-              <h2 class="fs-5 card-title">{{ reserva.alojamientoNombre }}</h2>
-              <p class="text-secondary">{{ reserva.ciudad }}</p>
-              <p class="mb-1">
-                {{ reserva.fechaLlegada | date: 'mediumDate' }} →
-                {{ reserva.fechaSalida | date: 'mediumDate' }}
-                ({{ reserva.noches }} noches)
-              </p>
-              <p class="mb-1">{{ reserva.huespedes }} huésped(es)</p>
-              <p class="fw-bold mb-2">
-                Total: {{ reserva.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
-              </p>
-              <span class="badge text-bg-success">{{ reserva.estado }}</span>
-            </div>
-          </article>
-        </div>
+    <div class="lista-reservas">
+      @for (reserva of reservas(); track reserva.id) {
+        <article class="reserva-card">
+          <h2>{{ reserva.alojamientoNombre }}</h2>
+          <p>{{ reserva.ciudad }}</p>
+          <p>{{ reserva.fechaLlegada }} → {{ reserva.fechaSalida }} ({{ reserva.noches }} noches)</p>
+          <p>{{ reserva.huespedes }} huésped(es)</p>
+          <p class="total">Total: {{ reserva.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</p>
+          <span class="estado">{{ reserva.estado }}</span>
+        </article>
       }
     </div>
   }
