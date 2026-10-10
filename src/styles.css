@@ -1,32 +1,50 @@
 /*
-  se añanden los colores que fijamos en los estandares del figma
- */
+  Global design tokens for the Kuppo marketplace.
+*/
 :root {
-  /*
-    Colores
-   */
+  /* Brand colors */
   --kuppo-yellow-light: #fff3b0;
   --kuppo-yellow: #ffd60a;
   --kuppo-red: #e63946;
   --kuppo-wine: #a4161a;
   --kuppo-warm-gray: #f6f4f1;
 
-  /*Fuente principal*/
+  /* Surface and text colors */
+  --kuppo-surface: #ffffff;
+  --kuppo-surface-muted: #f6f4f1;
+  --kuppo-text: #292524;
+  --kuppo-text-muted: #625d59;
+  --kuppo-border: #e5ded7;
+
+  /* Interaction colors */
+  --kuppo-wine-hover: #8a1215;
+  --kuppo-wine-active: #7a1013;
+  --kuppo-focus: #a4161a;
+
+  /* Shared visual properties */
+  --kuppo-radius-sm: 0.375rem;
+  --kuppo-radius-md: 0.75rem;
+  --kuppo-radius-lg: 1rem;
+  --kuppo-transition: 180ms ease-in-out;
+
+  /* Bootstrap integration */
   --bs-body-font-family: 'Kaisei HarunoUmi', Georgia, serif;
+  --bs-body-color: var(--kuppo-text);
+  --bs-body-bg: var(--kuppo-surface);
   --bs-link-color-rgb: 164, 22, 26;
   --bs-link-hover-color-rgb: 120, 16, 19;
 }
 
-/*Boton primario para pruebas y diseños*/
-.btn-kuppo{
+/* Shared primary button */
+.btn-kuppo {
   --bs-btn-color: var(--kuppo-yellow);
   --bs-btn-bg: var(--kuppo-wine);
   --bs-btn-border-color: var(--kuppo-wine);
   --bs-btn-hover-color: var(--kuppo-yellow);
-  --bs-btn-hover-bg: #8a1215;
-  --bs-btn-hover-border-color: #8a1215;
+  --bs-btn-hover-bg: var(--kuppo-wine-hover);
+  --bs-btn-hover-border-color: var(--kuppo-wine-hover);
   --bs-btn-active-color: var(--kuppo-yellow);
-  --bs-btn-active-bg: #7a1013;
-  --bs-btn-active-border-color: #7a1013;
+  --bs-btn-active-bg: var(--kuppo-wine-active);
+  --bs-btn-active-border-color: var(--kuppo-wine-active);
   --bs-btn-focus-shadow-rgb: 164, 22, 26;
 }
