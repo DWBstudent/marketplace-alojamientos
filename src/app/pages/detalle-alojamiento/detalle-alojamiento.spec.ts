@@ -7,6 +7,7 @@ import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Alojamiento } from '../../models/alojamiento';
+import { Resena } from '../../models/resena';
 import { DetalleAlojamiento } from './detalle-alojamiento';
 import { ReservaService } from '../../services/reserva.service';
 
@@ -76,8 +77,10 @@ describe('DetalleAlojamiento', () => {
     harness.detectChanges();
   }
 
-  function cargar(alojamientos: Alojamiento[]): void {
-    http.expectOne('data/marketplace-data.json').flush({ alojamientos, resenas: [] });
+  function cargar(alojamientos: Alojamiento[], resenas: Resena[] = []): void {
+    for (const peticion of http.match('data/marketplace-data.json')) {
+      peticion.flush({ alojamientos, resenas });
+    }
 
     harness.detectChanges();
   }
@@ -193,10 +196,10 @@ describe('DetalleAlojamiento', () => {
   it('should show an error message when the lodging cannot be loaded', async () => {
     await abrir('1');
 
-    http.expectOne('data/marketplace-data.json').flush('Error', {
-      status: 500,
-      statusText: 'Server Error',
-    });
+    const [peticionAlojamiento, peticionResenas] = http.match('data/marketplace-data.json');
+
+    peticionAlojamiento.flush('Error', { status: 500, statusText: 'Server Error' });
+    peticionResenas.flush({ alojamientos: [], resenas: [] });
 
     harness.detectChanges();
 
@@ -411,5 +414,25 @@ describe('DetalleAlojamiento', () => {
 
     expect(texto()).toContain('Este alojamiento ya no está disponible.');
     expect(navegar).not.toHaveBeenCalled();
+  });
+
+  it('should show the rating and the reviews of the lodging', async () => {
+    await abrir('1');
+    cargar(
+      [crearAlojamiento(1)],
+      [
+        {
+          id: 1,
+          alojamientoId: 1,
+          usuario: 'Laura',
+          calificacion: 5,
+          comentario: 'Excelente alojamiento.',
+        },
+      ],
+    );
+
+    expect(texto()).toContain('Calificación y reseñas');
+    expect(texto()).toContain('Laura');
+    expect(texto()).toContain('Excelente alojamiento.');
   });
 });

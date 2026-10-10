@@ -8,6 +8,7 @@ import { DetalleCaracteristicas } from '../../components/detalle-caracteristicas
 import { DetalleServiciosReglas } from '../../components/detalle-servicios-reglas/detalle-servicios-reglas';
 import { FormularioCotizacion } from '../../components/formulario-cotizacion/formulario-cotizacion';
 import { FormularioHuesped } from '../../components/formulario-huesped/formulario-huesped';
+import { ResenasAlojamiento } from '../../components/resenas-alojamiento/resenas-alojamiento';
 import { Cotizacion } from '../../models/cotizacion';
 import { DatosEstancia, ErroresEstancia } from '../../models/estancia';
 import { DatosHuesped } from '../../models/huesped';
@@ -18,17 +19,18 @@ import { ValidacionCotizacionService } from '../../services/validacion-cotizacio
 import { CreacionReservaService } from '../../services/creacion-reserva.service';
 
 @Component({
-  selector: 'app-detalle-alojamiento',
   imports: [
     RouterLink,
     DetalleCaracteristicas,
     DetalleServiciosReglas,
     FormularioCotizacion,
     FormularioHuesped,
+    ResenasAlojamiento,
     DecimalPipe,
   ],
-  templateUrl: './detalle-alojamiento.html',
+  selector: 'app-detalle-alojamiento',
   styleUrl: './detalle-alojamiento.css',
+  templateUrl: './detalle-alojamiento.html',
 })
 export class DetalleAlojamiento {
   private readonly route = inject(ActivatedRoute);
@@ -45,6 +47,14 @@ export class DetalleAlojamiento {
       switchMap((id) => this.alojamientoService.getAlojamientoPorId(id)),
     ),
     { initialValue: undefined },
+  );
+
+  protected readonly resenas = toSignal(
+    this.route.paramMap.pipe(
+      map((params) => Number(params.get('id'))),
+      switchMap((id) => this.alojamientoService.getResenasPorAlojamientoId(id)),
+    ),
+    { initialValue: [] },
   );
 
   protected readonly errores = signal<ErroresEstancia>({});
