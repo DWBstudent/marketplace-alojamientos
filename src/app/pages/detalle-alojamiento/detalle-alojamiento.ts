@@ -16,7 +16,7 @@ import { CotizacionService } from '../../services/cotizacion.service';
 import { ReservaService } from '../../services/reserva.service';
 import { ValidacionCotizacionService } from '../../services/validacion-cotizacion.service';
 import { CreacionReservaService } from '../../services/creacion-reserva.service';
-
+import { ResenasAlojamiento } from '../../components/resenas-alojamiento/resenas-alojamiento';
 @Component({
   selector: 'app-detalle-alojamiento',
   imports: [
@@ -46,6 +46,13 @@ export class DetalleAlojamiento {
     ),
     { initialValue: undefined },
   );
+  protected readonly resenas = toSignal(
+    this.route.paramMap.pipe(
+      map((params) => Number(params.get('id'))),
+      switchMap((id) => this.alojamientoService.getResenasPorAlojamientoId(id)),
+    ),
+    { initialValue: [] },
+  );
 
   protected readonly errores = signal<ErroresEstancia>({});
   protected readonly cotizacion = signal<Cotizacion | null>(null);
@@ -61,6 +68,7 @@ export class DetalleAlojamiento {
 
     return `${ahora.getFullYear()}-${mes}-${dia}`;
   });
+
 
   protected cotizar(estancia: DatosEstancia): void {
     const alojamiento = this.alojamiento();
