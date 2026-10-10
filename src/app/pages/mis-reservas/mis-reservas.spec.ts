@@ -1,3 +1,4 @@
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Reserva } from '../../models/reserva';
@@ -43,7 +44,9 @@ describe('MisReservas', () => {
   });
 
   it('should show an empty message when there are no reservations', () => {
-    expect(fixture.nativeElement.textContent).toContain('No tienes reservas todavía');
+    expect(fixture.nativeElement.textContent).toContain(
+      'No tienes reservas todavía',
+    );
   });
 
   it('should not show the empty message when there is a reservation', () => {
@@ -53,7 +56,9 @@ describe('MisReservas', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).not.toContain('No tienes reservas todavía');
+    expect(fixture.nativeElement.textContent).not.toContain(
+      'No tienes reservas todavía',
+    );
   });
 
   it('should persist reservations in localStorage', () => {
@@ -61,7 +66,9 @@ describe('MisReservas', () => {
 
     const reserva = reservaService.crearReserva(crearReserva());
 
-    const guardadas = JSON.parse(localStorage.getItem('marketplace-reservas') ?? '[]') as Reserva[];
+    const guardadas = JSON.parse(
+      localStorage.getItem('marketplace-reservas') ?? '[]',
+    ) as Reserva[];
 
     expect(guardadas).toHaveLength(1);
     expect(guardadas[0]).toEqual(reserva);
@@ -82,8 +89,9 @@ describe('MisReservas', () => {
 
     expect(nuevoServicio.reservas()).toEqual([reserva]);
   });
+
   describe('MisReservas with saved reservations', () => {
-    const reserva = {
+    const reserva: Reserva = {
       id: '1',
       alojamientoId: 1,
       alojamientoNombre: 'Casa Prueba',
@@ -98,16 +106,29 @@ describe('MisReservas', () => {
       correoHuesped: 'ana@correo.com',
     };
 
-    beforeEach(() => {
-      localStorage.setItem('marketplace-reservas', JSON.stringify([reserva]));
+    beforeEach(async () => {
+      TestBed.resetTestingModule();
+      localStorage.clear();
+
+      localStorage.setItem(
+        'marketplace-reservas',
+        JSON.stringify([reserva]),
+      );
+
+      await TestBed.configureTestingModule({
+        imports: [MisReservas],
+      }).compileComponents();
     });
 
-    afterEach(() => localStorage.clear());
+    afterEach(() => {
+      localStorage.clear();
+    });
 
     it('should list the saved reservations', async () => {
-      await TestBed.configureTestingModule({ imports: [MisReservas] }).compileComponents();
       const fixture = TestBed.createComponent(MisReservas);
+
       await fixture.whenStable();
+      fixture.detectChanges();
 
       const texto = (fixture.nativeElement as HTMLElement).textContent;
 
