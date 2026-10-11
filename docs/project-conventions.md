@@ -21,7 +21,7 @@ The code is organized by type, following the reference architecture of the cours
 src/app/
 ├── components/    Reusable pieces used by several pages (navbar, footer, alojamiento-card)
 ├── pages/         Screens loaded by a route (inicio, listado-alojamientos, detalle-alojamiento, mis-reservas)
-├── services/      Data access and business logic (alojamiento, reserva)
+├── services/      Data access and business logic (alojamiento, filtro-alojamientos, cotizacion, creacion-reserva, reserva)
 ├── models/        TypeScript interfaces (alojamiento, reserva, resena, filtro-busqueda)
 ├── app.ts         Root component (app.html, app.css)
 ├── app.config.ts  Application providers
@@ -106,13 +106,9 @@ Rules:
 - Git identity: use the email linked to your GitHub account (`git config --global user.email`). Otherwise, your commits are not attributed to you. Commits count in the statistics only once they reach `main`.
 - Never commit secrets, `node_modules/`, `.angular/` or `.idea/` (already ignored).
 
-## 8. Business rules to keep in mind
+## 8. Business rules
 
-- Quotation: nights × price per night = subtotal; cleaning fee defined by the lodging; service fee is 10% of the subtotal; total = subtotal + cleaning fee + service fee.
-- The departure date must be after the arrival date, and the arrival date cannot be in the past.
-- The number of guests must be greater than zero and cannot exceed the capacity of the lodging.
-- A quotation is generated only with valid dates, and a reservation is allowed only after a valid quotation. Its initial status is `CONFIRMADA`.
-- Show a message when a search has no results and when there are no reservations.
+The business rules and the quotation formula are documented in [requirements.md](requirements.md). Keep that file as the single source of truth and update it when a rule changes.
 
 ## 9. Decisions
 
