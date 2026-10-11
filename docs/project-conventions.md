@@ -123,5 +123,10 @@ The business rules and the quotation formula are documented in [requirements.md]
 | Mobile menu            | Built with an Angular signal, without Bootstrap JavaScript                  |
 | Service naming         | `Service` suffix in file and class name (`AlojamientoService`)              |
 | Data file              | `public/data/marketplace-data.json`, read only through `AlojamientoService` |
-| Quotation              | Inside the detail page (`alojamientos/:id`), not in its own route           |
 
+### Still open
+
+| Decision                                                        | When it is resolved                       |
+|-----------------------------------------------------------------|-------------------------------------------|
+| Quotation inside the detail page (proposal) or in its own route | After the detail prototype                |
+| Quick search bar and date fields on the home page (extra)       | After the mandatory requirements are done |
