@@ -4,11 +4,11 @@ Team agreements for the **Marketplace de Alojamientos** project (Angular 21, fro
 
 ## 1. Language rules
 
-| Where | Language |
-|---|---|
-| Commit messages, README, this document, code comments | English |
+| Where                                                                               | Language                                                                                      |
+|-------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| Commit messages, README, this document, code comments                               | English                                                                                       |
 | Domain and code identifiers (classes, interfaces, services, components, properties) | Spanish, following the brief and the JSON (`Alojamiento`, `Reserva`, `Resena`, `precioNoche`) |
-| Text shown to the user in the interface | Spanish |
+| Text shown to the user in the interface                                             | Spanish                                                                                       |
 
 - No accents or `ñ` in identifiers, file names or folder names (`Resena`, `banos`, not `Reseña`, `baños`).
 - Text visible to the user may use accents (`"Mis reservas"`, `"Máximo 8 huéspedes"`).
@@ -21,7 +21,7 @@ The code is organized by type, following the reference architecture of the cours
 src/app/
 ├── components/    Reusable pieces used by several pages (navbar, footer, alojamiento-card)
 ├── pages/         Screens loaded by a route (inicio, listado-alojamientos, detalle-alojamiento, mis-reservas)
-├── services/      Data access and business logic (alojamiento, reserva)
+├── services/      Data access and business logic (alojamiento, filtro-alojamientos, cotizacion, creacion-reserva, reserva)
 ├── models/        TypeScript interfaces (alojamiento, reserva, resena, filtro-busqueda)
 ├── app.ts         Root component (app.html, app.css)
 ├── app.config.ts  Application providers
@@ -42,13 +42,13 @@ Rules:
 
 ## 3. Naming conventions
 
-| Element | Convention | Example |
-|---|---|---|
-| Files and folders | kebab-case | `listado-alojamientos.ts` |
-| Classes and interfaces | PascalCase | `Alojamiento`, `ListadoAlojamientos` |
-| Methods and variables | camelCase (methods start with a verb) | `getAlojamientos()`, `precioNoche` |
-| Constants | UPPER_SNAKE_CASE | `TARIFA_SERVICIO` |
-| CSS classes | kebab-case | `alojamiento-card` |
+| Element                | Convention                            | Example                              |
+|------------------------|---------------------------------------|--------------------------------------|
+| Files and folders      | kebab-case                            | `listado-alojamientos.ts`            |
+| Classes and interfaces | PascalCase                            | `Alojamiento`, `ListadoAlojamientos` |
+| Methods and variables  | camelCase (methods start with a verb) | `getAlojamientos()`, `precioNoche`   |
+| Constants              | UPPER_SNAKE_CASE                      | `TARIFA_SERVICIO`                    |
+| CSS classes            | kebab-case                            | `alojamiento-card`                   |
 
 - Components are standalone and keep the CLI default names (class `Inicio`, no `Component` suffix).
 - Services use `@Injectable({ providedIn: 'root' })` and the `Service` suffix in the file and class name (`alojamiento.service.ts`, `AlojamientoService`). `angular.json` makes `ng generate service` add the suffix by default. Components and pages keep the CLI defaults without suffix.
@@ -71,7 +71,7 @@ Rules:
 - **Icons:** Font Awesome `fa-solid` classes, for example `fa-solid fa-house`.
 - **Logo:** `public/assets/images/kuppo-logo.png`, referenced in templates as `assets/images/kuppo-logo.png`.
 - **Page metadata:** `lang="es"` and the title `Kuppo` in `src/index.html`.
-- **Number format:** prices in Colombian pesos with a thousands separator (`$180.000 / noche`) and ratings with a decimal comma (`4,8`). This requires registering the `es-CO` locale in Angular.
+- **Number format:** prices in Colombian pesos with a thousand separator (`$180.000 / noche`) and ratings with a decimal comma (`4,8`). This requires registering the `es-CO` locale in Angular.
 - **Reference design:** the Figma prototypes (link in the README). When the application intentionally differs from the design, update the design or its description so they do not contradict each other.
 
 ## 6. Testing
@@ -103,34 +103,25 @@ Rules:
 - Chain the tests and the commit so a failing test blocks the commit: `ng test --watch=false && git add <files> && git commit -m "type: description"`.
 - One Pull Request covers one topic.
 - If you edit a file from the GitHub web interface, change the branch name that GitHub proposes before committing (names such as `patch-1` do not follow the convention).
-- Git identity: use the email linked to your GitHub account (`git config --global user.email`). Otherwise your commits are not attributed to you. Commits count in the statistics only once they reach `main`.
+- Git identity: use the email linked to your GitHub account (`git config --global user.email`). Otherwise, your commits are not attributed to you. Commits count in the statistics only once they reach `main`.
 - Never commit secrets, `node_modules/`, `.angular/` or `.idea/` (already ignored).
 
-## 8. Business rules to keep in mind
+## 8. Business rules
 
-- Quotation: nights × price per night = subtotal; cleaning fee defined by the lodging; service fee is 10% of the subtotal; total = subtotal + cleaning fee + service fee.
-- The departure date must be after the arrival date, and the arrival date cannot be in the past.
-- The number of guests must be greater than zero and cannot exceed the capacity of the lodging.
-- A quotation is generated only with valid dates, and a reservation is allowed only after a valid quotation. Its initial status is `CONFIRMADA`.
-- Show a message when a search has no results and when there are no reservations.
+The business rules and the quotation formula are documented in [requirements.md](requirements.md). Keep that file as the single source of truth and update it when a rule changes.
 
 ## 9. Decisions
 
 ### Decided
 
-| Decision | Choice |
-|---|---|
-| Platform name | Kuppo |
-| Folder structure | By type: `components`, `pages`, `services` and `models` |
-| Visual library | Bootstrap 5.3 (CSS only) with Font Awesome 7 |
-| Typography and palette | Kaisei HarunoUmi and the Kuppo palette as CSS variables |
-| Mobile menu | Built with an Angular signal, without Bootstrap JavaScript |
-| Service naming | `Service` suffix in file and class name (`AlojamientoService`) |
-| Data file | `public/data/marketplace-data.json`, read only through `AlojamientoService` |
+| Decision               | Choice                                                                      |
+|------------------------|-----------------------------------------------------------------------------|
+| Platform name          | Kuppo                                                                       |
+| Folder structure       | By type: `components`, `pages`, `services` and `models`                     |
+| Visual library         | Bootstrap 5.3 (CSS only) with Font Awesome 7                                |
+| Typography and palette | Kaisei HarunoUmi and the Kuppo palette as CSS variables                     |
+| Mobile menu            | Built with an Angular signal, without Bootstrap JavaScript                  |
+| Service naming         | `Service` suffix in file and class name (`AlojamientoService`)              |
+| Data file              | `public/data/marketplace-data.json`, read only through `AlojamientoService` |
+| Quotation              | Inside the detail page (`alojamientos/:id`), not in its own route           |
 
-### Still open
-
-| Decision | When it is resolved |
-|---|---|
-| Quotation inside the detail page (proposal) or in its own route | After the detail prototype |
-| Quick search bar and date fields on the home page (extra) | After the mandatory requirements are done |
